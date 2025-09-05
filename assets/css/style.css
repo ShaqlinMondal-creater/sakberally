@@ -1,0 +1,14 @@
+.nav-link {
+    display: inline-block;       /* ensure background fits per link */
+    background-image: url('assets/images/link_bg.png');
+    background-size: cover;      /* scale to fit */
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #fff;                 /* adjust text color for contrast */
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover {
+    opacity: 0.85;               /* subtle hover effect */
+  }
