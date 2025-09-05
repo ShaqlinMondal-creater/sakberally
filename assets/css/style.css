@@ -1,14 +1,39 @@
 .nav-link {
-    display: inline-block;       /* ensure background fits per link */
-    background-image: url('assets/images/link_bg.png');
-    background-size: cover;      /* scale to fit */
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #fff;                 /* adjust text color for contrast */
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
+  position: relative;
+  display: inline-block;
+  transition: background-size .2s ease, color .2s ease, opacity .2s ease;
+}
 
-  .nav-link:hover {
-    opacity: 0.85;               /* subtle hover effect */
+.nav-link.is-active,
+.nav-link[aria-current="page"],
+.nav-link:hover,
+.nav-link:focus-visible,
+.group:hover > .nav-link {
+  color: #fff !important;
+  background-image: url('/sakberally//assets/images/link_bg.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+}
+
+/* Footer Button */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+
+/* Slider css */
+
+  .slider-outer {
+    height: clamp(300px, 65vh, 700px);
+  }
+  .slider-track {
+    display: flex;
+    width: 100%;
+    transform: translateX(0);
+    transition: transform .6s ease;
+  }
+  .slide {
+    flex: 0 0 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: clamp(300px, 65vh, 700px);
   }
