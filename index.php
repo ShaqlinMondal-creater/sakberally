@@ -3,6 +3,8 @@
   <!-- Slider -->
   <?php include("inc/slider.php"); ?>
   <br>
+  <?php include("inc/home_category.php"); ?>
+  <br>
   <?php include("inc/home_about.php");?>
   <?php include("inc/home_products.php");?>
   <?php include("inc/home_inquiry.php");?>

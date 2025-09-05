@@ -1,5 +1,5 @@
 <!-- Quick Inquiry -->
-<section id="inquiry" class="relative overflow-hidden">
+<section id="home_inquiry" class="relative overflow-hidden">
   <!-- Red base -->
   <div class="absolute inset-0 bg-[#e21e26] -z-10"></div>
   <!-- Grid pattern overlay (repeat) -->
@@ -26,31 +26,31 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label class="sr-only" for="first_name">First Name</label>
             <input id="first_name" name="first_name" type="text" placeholder="First Name"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-white focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
 
             <label class="sr-only" for="last_name">Last Name</label>
             <input id="last_name" name="last_name" type="text" placeholder="Last Name"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-white focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
           </div>
 
           <!-- Row 2 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label class="sr-only" for="email">Email Id</label>
             <input id="email" name="email" type="email" placeholder="Email Id"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-white focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
 
             <label class="sr-only" for="phone">Phone Number</label>
             <input id="phone" name="phone" type="tel" placeholder="Phone Number"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-white focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
           </div>
 
           <!-- Message -->
           <label class="sr-only" for="message">Message</label>
           <textarea id="message" name="message" rows="4" placeholder="Message"
-                    class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-white focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none"></textarea>
+                    class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none"></textarea>
 
           <!-- Submit -->
-          <div class="pt-2 flex justify-center">
+          <div class="pt-2 flex justify-start">
             <button type="submit"
                     class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
               Submit

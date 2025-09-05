@@ -3,9 +3,9 @@
   <div class="relative overflow-hidden slider-outer">
     <!-- Track -->
     <div id="sliderTrack" class="slider-track">
-      <div class="slide" style="background-image:url('https://images.pexels.com/photos/209235/pexels-photo-209235.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
-      <div class="slide" style="background-image:url('https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
-      <div class="slide" style="background-image:url('https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+      <div class="slide" style="background-image:url('assets/images/slider/NTRJ8ITQPF-20181003-045040.jpg');"></div>
+      <div class="slide" style="background-image:url('assets/images/slider/G1RPGIZVDY-20181005-082627.jpg');"></div>
+      <div class="slide" style="background-image:url('assets/images/slider/X3UU1X5GQ3-20181005-082717.jpg');"></div>
     </div>
 
     <!-- Arrows -->
