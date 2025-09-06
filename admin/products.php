@@ -69,7 +69,7 @@
   <script>
     /* ======= CONFIG ======= */
     // Replace with your real base url (no trailing slash), e.g. 'https://sakberally.com'
-    const BASE_URL = '<?php echo BASE_URL; ?>';
+    const BASE_URL = 'https://sakberally.com/apis';
     const API_URL  = BASE_URL + '/products/fetch.php';
 
     /* ======= SIDEBAR ======= */
