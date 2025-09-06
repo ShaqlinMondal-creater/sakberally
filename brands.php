@@ -73,8 +73,8 @@
     // Loop through the brands and add them to the grid
     brands.forEach(brand => {
       const brandName = brand.name;
-      const logoPath = brand.brand_logo_path ? `https://sakberally.com/apis${brand.brand_logo_path.replace('../', '')}` : '';
-      const pdfPath = brand.brand_catalouge_path ? `https://sakberally.com/apis${brand.brand_catalouge_path.replace('../', '')}` : null;
+      const logoPath = brand.brand_logo_path ? `https://sakberally.com/apis/${brand.brand_logo_path.replace('../', '')}` : '';
+      const pdfPath = brand.brand_catalouge_path ? `https://sakberally.com/apis/${brand.brand_catalouge_path.replace('../', '')}` : null;
 
       const brandHTML = `
         <div class="group block p-2 sm:p-3 md:p-4 rounded transition-transform duration-200
