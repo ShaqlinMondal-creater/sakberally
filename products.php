@@ -115,7 +115,7 @@
     title.textContent = truncateText(item.name, 20); // Truncate if more than 20 chars
 
     const footer = document.createElement('div');
-    footer.className = "px-3 py-2 flex items-center justify-between text-sm";
+    footer.className = "px-3 py-2 flex items-center justify-center text-sm";
     
     // Replace price and view with "View Specification"
     const viewBtn = document.createElement('button');
