@@ -225,6 +225,7 @@ function renderRows(categories) {
 }
 
 // Open SweetAlert popup for updating category
+// Open SweetAlert popup for updating category
 function openUpdatePopup(id, name, sort_no, category_image_path) {
   Swal.fire({
     title: 'Update Category',
@@ -258,7 +259,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const formData = new FormData();
       formData.append('id', result.value.id);
 
-      // Append only updated fields
+      // Append only updated fields (make sure to always append if it's set)
       if (result.value.name) formData.append('name', result.value.name);
       if (result.value.sort_id) formData.append('sort_no', result.value.sort_id);
       if (result.value.category_image) formData.append('category_image', result.value.category_image); // Append image file if selected
@@ -284,6 +285,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     }
   });
 }
+
 
   function updateMeta() {
     const start = state.count ? state.offset + 1 : 0;
