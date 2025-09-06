@@ -35,7 +35,7 @@
     </main>
     <script>
         // ====== CONFIG ======
-        const BASE_URL = "http://localhost/sakberally/apis"; // <-- replace this
+        const BASE_URL = <?php echo BASE_URL; ?>; // <-- replace this
         const API_URL = `${BASE_URL}/products/fetch.php`;
 
         // URL params

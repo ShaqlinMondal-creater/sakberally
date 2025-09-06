@@ -10,7 +10,7 @@
 </section>
 <script>
   // Set this once on your page (or replace with your actual base URL)
-  window.BASE_URL = "http://localhost/sakberally/apis"; // e.g. "https://example.com"
+  window.BASE_URL = <?php echo BASE_URL; ?>; // e.g. "https://example.com"
 
   async function loadCategories() {
     const grid = document.getElementById('catGrid');
