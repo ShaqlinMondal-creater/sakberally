@@ -259,17 +259,20 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const formData = new FormData();
       formData.append('id', result.value.id);
 
-      // Append only updated fields
-      if (result.value.name) formData.append('name', result.value.name);
-      if (result.value.sort_id) formData.append('sort_no', result.value.sort_id);
-      if (result.value.category_image) formData.append('category_image', result.value.category_image); // Append image file if selected
-      formData.append('token', localStorage.getItem('user_token')); // Pass token
+      // Append fields even if they are not modified
+      formData.append('name', result.value.name || '');  // Always append name (even empty)
+      formData.append('sort_no', result.value.sort_id || 0);  // Always append sort_no (even empty)
+      
+      // Only append category_image if a file is selected
+      if (result.value.category_image) {
+        formData.append('category_image', result.value.category_image);  // Append image file if selected
+      } else {
+        // If no new image is selected, we append the current image path or null
+        // It depends on your backend whether you need to send the current image or 'null'
+        formData.append('category_image', category_image_path || null);  // Retain the old image if no new one is selected
+      }
 
-      // Debugging - log FormData contents
-      console.log('FormData being sent:');
-      formData.forEach((value, key) => {
-        console.log(key, value);
-      });
+      formData.append('token', localStorage.getItem('user_token')); // Pass token
 
       try {
         const response = await fetch('https://sakberally.com/apis/categories/update.php', {
