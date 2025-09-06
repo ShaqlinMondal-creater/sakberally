@@ -16,13 +16,16 @@ if ($name === '') {
     json_out(422, ['success' => false, 'message' => 'name is required']);
 }
 
-// Files must be provided
-if (!isset($_FILES['brand_logo']) || $_FILES['brand_logo']['error'] === UPLOAD_ERR_NO_FILE) {
+// Check if 'brand_logo' is uploaded and handle error
+if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] === UPLOAD_ERR_NO_FILE) {
     json_out(422, ['success' => false, 'message' => 'brand_logo file is required']);
 }
-if (!isset($_FILES['catalouge']) || $_FILES['catalouge']['error'] === UPLOAD_ERR_NO_FILE) {
+
+// Check if 'catalouge' is uploaded and handle error
+if (isset($_FILES['catalouge']) && $_FILES['catalouge']['error'] === UPLOAD_ERR_NO_FILE) {
     json_out(422, ['success' => false, 'message' => 'catalouge file is required']);
 }
+
 
 // --- Step 1: validate admin token ---
 $stmt = $mysqli->prepare("SELECT id, role FROM t_users WHERE token = ? LIMIT 1");
