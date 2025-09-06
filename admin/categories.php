@@ -241,8 +241,9 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const categoryImage = document.getElementById('categoryImage').files[0];
       const categoryId = document.getElementById('categoryId').value;
 
-      if (!categoryName || !categorySortId) {
-        Swal.showValidationMessage('Please enter category name and sort id');
+      // Validation only if fields are empty and require update
+      if (!categoryName && !categoryImage && !categorySortId) {
+        Swal.showValidationMessage('Please enter at least one field to update');
       } else {
         return {
           id: categoryId,
@@ -256,11 +257,11 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     if (result.isConfirmed) {
       const formData = new FormData();
       formData.append('id', result.value.id);
-      formData.append('name', result.value.name);
-      formData.append('sort_no', result.value.sort_id);
-      if (result.value.category_image) {
-        formData.append('category_image', result.value.category_image); // Append image file if provided
-      }
+
+      // Append only updated fields
+      if (result.value.name) formData.append('name', result.value.name);
+      if (result.value.sort_id) formData.append('sort_no', result.value.sort_id);
+      if (result.value.category_image) formData.append('category_image', result.value.category_image); // Append image file if selected
       formData.append('token', localStorage.getItem('user_token')); // Pass token
 
       try {
@@ -283,8 +284,6 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     }
   });
 }
-
-
 
   function updateMeta() {
     const start = state.count ? state.offset + 1 : 0;
