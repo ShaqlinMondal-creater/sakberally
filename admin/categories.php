@@ -176,7 +176,7 @@
   //   $tbody.appendChild(frag);
   // }
 
-  // Render categories rows with action buttons
+// Render categories rows with action buttons
 function renderRows(categories) {
   $tbody.innerHTML = '';
   if (!categories || !categories.length) {
@@ -241,14 +241,16 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const categoryImage = document.getElementById('categoryImage').files[0];
       const categoryId = document.getElementById('categoryId').value;
 
-      
+      if (!categoryName || !categorySortId) {
+        Swal.showValidationMessage('Please enter category name and sort id');
+      } else {
         return {
           id: categoryId,
           name: categoryName,
           sort_id: categorySortId,
           category_image: categoryImage
         };
-      
+      }
     }
   }).then(async (result) => {
     if (result.isConfirmed) {
@@ -257,7 +259,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       formData.append('name', result.value.name);
       formData.append('sort_no', result.value.sort_id);
       if (result.value.category_image) {
-        formData.append('category_image', result.value.category_image);
+        formData.append('category_image', result.value.category_image); // Append image file if provided
       }
       formData.append('token', localStorage.getItem('user_token')); // Pass token
 
@@ -281,6 +283,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     }
   });
 }
+
 
 
   function updateMeta() {
