@@ -3,7 +3,22 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Title -->
-    <h2 class="text-2xl font-semibold mb-6">Random Product Picks</h2>
+    <div class="relative flex justify-center mb-8 md:mb-12">
+      <img src="assets/images/35RW72DCDJ-20180613-150311.png" alt=""
+           aria-hidden="true"
+           class="hidden md:block w-16 lg:w-20 absolute -top-14 pointer-events-none select-none">
+
+      <!-- Brush Title -->
+      <div class="w-full flex justify-center">
+        <h2 class="inline-block bg-[url('assets/images/title_bg2.png')] bg-center bg-contain bg-no-repeat">
+          <span class="block text-white font-serif font-semibold leading-none
+                       px-5 sm:px-6 md:px-8 py-2.5 sm:py-3.5 md:py-4
+                       text-2xl sm:text-3xl md:text-4xl rounded-tr-2xl">
+            S Akberally Products
+          </span>
+        </h2>
+      </div>
+    </div>
 
     <!-- Grid for random products -->
     <div id="randomProductsGrid" class="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4"></div>
@@ -78,7 +93,7 @@
     imgWrap.addEventListener('click', () => {
       // Navigate to product detail page with product ID
       const productId = item.id;
-      window.location.href = `product_detail.php?id=${productId}`;
+      window.location.href = `product_detail?id=${productId}`;
     });
 
     imgWrap.appendChild(img);
