@@ -62,7 +62,7 @@
 <script>
   (function(){
     // Set your base URL once
-    const BASE_URL = <?php echo BASE_URL; ?>;       // e.g. 'https://yourdomain.com'
+    const BASE_URL = "<?php echo BASE_URL; ?>";       // e.g. 'https://yourdomain.com'
     const API = `${BASE_URL}/brands/fetch.php`;
 
     const viewport = document.getElementById('brandViewport');
