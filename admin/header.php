@@ -21,6 +21,7 @@
 
   <!-- Chart.js (for the example charts) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.min.css" rel="stylesheet">
 
   <style>
     /* smooth sidebar slide on mobile */

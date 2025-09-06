@@ -403,6 +403,6 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
   })();
 </script>
 
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.all.min.js"></script>
 </body>
 </html>
