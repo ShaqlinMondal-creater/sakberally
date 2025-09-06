@@ -19,7 +19,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="h-28 flex items-center justify-between">
                     <!-- Logo left -->
-                    <a href="index.php" class="flex items-center gap-2">
+                    <a href="index" class="flex items-center gap-2">
                         <img src="assets/images/3X7BIXE3MB-20180613-101023.jpg" alt="S Akberally &amp; Co." class="h-15 w-full">
                         <span class="sr-only">S Akberally &amp; Co.</span>
                     </a>
@@ -76,16 +76,16 @@
                         <div class="flex items-center gap-2">
                             <!-- Desktop menu (your original links) -->
                             <div class="hidden md:flex items-center gap-2 lg:gap-4">
-                                <a data-link="index.php" class="px-4 py-4 rounded nav-link" href="index.php">
+                                <a data-link="index.php" class="px-4 py-4 rounded nav-link" href="index">
                                     HOME
                                 </a>
-                                <a data-link="about.php" class="px-4 py-4 rounded nav-link" href="about.php">
+                                <a data-link="about.php" class="px-4 py-4 rounded nav-link" href="about">
                                     ABOUT US
                                 </a>
 
                                 <!-- Products dropdown (desktop hover) -->
                                 <div class="relative group">
-                                    <button data-link="products.php" href="products.php" class="px-4 py-4 rounded nav-link flex items-center gap-1 text-gray-700 hover:text-red-600">
+                                    <button data-link="products.php" href="products" class="px-4 py-4 rounded nav-link flex items-center gap-1 text-gray-700 hover:text-red-600">
                                         PRODUCTS
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -95,18 +95,18 @@
                                     <!-- Keep open while hovering parent OR dropdown -->
                                     <div class="absolute left-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg
                                         opacity-0 invisible group-hover:opacity-100 group-hover:visible  transition duration-200 ease-out z-20 py-2">
-                                        <a href="products.php?category=Power Tools" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Power Tools</a>
-                                        <a href="products.php?category=Workshop Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Workshop Machinery</a>
-                                        <a href="products.php?category=Wood Working" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Wood Working</a>
-                                        <a href="products.php?category=Steel Metal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Steel Metal</a>
-                                        <a href="products.php?category=Lifting Tackles" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Lifting Tackles</a>
-                                        <a href="products.php?category=Garage Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Garage Machinery</a>
+                                        <a href="products?category=Power Tools" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Power Tools</a>
+                                        <a href="products?category=Workshop Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Workshop Machinery</a>
+                                        <a href="products?category=Wood Working" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Wood Working</a>
+                                        <a href="products?category=Steel Metal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Steel Metal</a>
+                                        <a href="products?category=Lifting Tackles" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Lifting Tackles</a>
+                                        <a href="products?category=Garage Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Garage Machinery</a>
                                     </div>
                                 </div>
 
-                                <a data-link="brands.php" class="px-4 py-4 rounded nav-link" href="brands.php">BRANDS</a>
-                                <a data-link="inquiry_form.php" class="px-4 py-4 rounded nav-link" href="inquiry_form.php">INQUIRY FORM</a>
-                                <a data-link="contact_us.php" class="px-4 py-4 rounded nav-link" href="contact_us.php">CONTACT US</a>
+                                <a data-link="brands.php" class="px-4 py-4 rounded nav-link" href="brands">BRANDS</a>
+                                <a data-link="inquiry_form.php" class="px-4 py-4 rounded nav-link" href="inquiry_form">INQUIRY FORM</a>
+                                <a data-link="contact_us.php" class="px-4 py-4 rounded nav-link" href="contact_us">CONTACT US</a>
                             </div>
 
                             <!-- Mobile menu button (unchanged) -->
