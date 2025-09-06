@@ -249,7 +249,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
           id: categoryId,
           name: categoryName,
           sort_id: categorySortId,
-          category_image: categoryImage
+          category_image: categoryImage // Only send the file if a new one is selected
         };
       }
     }
@@ -257,15 +257,15 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     if (result.isConfirmed) {
       const formData = new FormData();
       formData.append('id', result.value.id);
-      formData.append('name', result.value.name || ''); // Append the name (even if empty)
-      formData.append('sort_no', result.value.sort_id || 0); // Append the sort_no (even if empty)
+      formData.append('name', result.value.name || ''); // Always append name (even empty)
+      formData.append('sort_no', result.value.sort_id || 0); // Always append sort_no (even empty)
 
-      // Only append category_image if a new file is selected, otherwise, send the current image path
+      // If no new image is selected, send the current image path or empty string
       if (result.value.category_image) {
-        formData.append('category_image', result.value.category_image); // Append the new image
+        formData.append('category_image', result.value.category_image); // Append new image
       } else {
-        // If no new image selected, append the current image path (or null if no image exists)
-        formData.append('category_image', category_image_path || null);
+        // If no new image is selected, we append the current image path (or empty string)
+        formData.append('category_image', category_image_path || ''); // Send current path if available
       }
 
       formData.append('token', localStorage.getItem('user_token')); // Pass token
