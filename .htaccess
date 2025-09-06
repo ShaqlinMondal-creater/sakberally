@@ -1,0 +1,75 @@
+# ===============================
+# Root .htaccess (Apache 2.4+)
+# ===============================
+
+# 1) Security / basics
+Options -Indexes
+AddDefaultCharset utf-8
+
+# Block common sensitive files from the web
+<FilesMatch "^(composer\.(json|lock)|package\.json|yarn\.lock|pnpm-lock\.yaml|\.env|\.gitignore|\.htpasswd|.*\.sql)$">
+  Require all denied
+</FilesMatch>
+
+# 2) Compression (skip for /apis and /admin)
+<IfModule mod_deflate.c>
+  SetOutputFilter DEFLATE
+  AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+  # Don’t compress for these paths
+  SetEnvIf Request_URI "^/(apis|admin)/" no-gzip=1
+</IfModule>
+
+# 3) Caching for static assets (PHP/API not cached)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|otf|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Allow fonts to be used across domains (optional)
+  <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|svg)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+# 4) URL rewriting (skip /apis and /admin completely)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Bypass all rules for these directories
+  RewriteRule ^(apis|admin)(/.*)?$ - [L]
+
+  # (Optional) Force HTTPS — uncomment if you want
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # (Optional) Force non-www — use ONE of these blocks
+  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  # RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # (Optional) Or force www
+  # RewriteCond %{HTTP_HOST} !^www\. [NC]
+  # RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Front controller: only if the request is NOT an existing file/dir
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.php [L,QSA]
+</IfModule>
