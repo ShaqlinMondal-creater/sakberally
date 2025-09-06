@@ -10,16 +10,14 @@
 
             <!-- Filters (no apply button, fetch on selection/typing) -->
             <div class="mb-6 flex justify-end gap-3">
-            <input id="searchInput" type="text" placeholder="Search product name…"
-                    class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
-            <select id="categorySelect"
-                    class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
-                <option value="">All Categories</option>
-                <option value="Wood Working">Wood Working</option>
-                <!-- add more categories as needed -->
-            </select>
+                <input id="searchInput" type="text" placeholder="Search product name…" class="w-60 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                <select id="categorySelect" class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                    <option value="">All Categories</option>
+                    <option value="Wood Working">Wood Working</option>
+                    <!-- add more categories as needed -->
+                </select>
             </div>
-
+            <hr class="w-full h-5 border-2 border-gray-300">
             <!-- Grid -->
             <div id="productsGrid" class="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4"></div>
 
