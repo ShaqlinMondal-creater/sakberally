@@ -241,16 +241,14 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const categoryImage = document.getElementById('categoryImage').files[0];
       const categoryId = document.getElementById('categoryId').value;
 
-      if (!categoryName || !categorySortId) {
-        Swal.showValidationMessage('Please enter category name and sort id');
-      } else {
+      
         return {
           id: categoryId,
           name: categoryName,
           sort_id: categorySortId,
           category_image: categoryImage
         };
-      }
+      
     }
   }).then(async (result) => {
     if (result.isConfirmed) {
