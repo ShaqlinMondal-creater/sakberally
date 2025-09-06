@@ -13,10 +13,16 @@ ini_set('display_errors', '1');
 error_reporting(E_ALL);
 
 /* ====== DB CONFIG ====== */
-$dbHost = 'localhost';
+// $dbHost = 'localhost';
+// $dbName = 'sakberally_';
+// $dbUser = 'sakberally_';
+// $dbPass = '';
+
+$dbHost = '127.0.0.1';
 $dbName = 'sakberally_';
 $dbUser = 'sakberally_';
-$dbPass = '';
+$dbPass = '@7Uvqi429';
+
 $charset = 'utf8mb4';
 
 /* ====== CONNECTION ====== */
