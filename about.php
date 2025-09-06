@@ -53,7 +53,7 @@
         </div>
 
         <div class="grid md:grid-cols-12 gap-8 md:gap-10 items-start">
-          <div class="md:col-span-8 text-gray-800 leading-7 md:leading-8 text-[15px] md:text-base">
+          <div class="md:col-span-7 text-gray-800 leading-7 md:leading-8 text-[15px] md:text-base">
             
             <p class="mt-4">
               <span class="font-bold text-[#e21e26]">Mr. Yakub Johar</span> is our honorable Partner, under whose astute
@@ -70,8 +70,8 @@
             </p>
           </div>
           <!-- Left: person -->
-          <div class="md:col-span-4 flex md:block justify-center">
-            <img src="assets/images/about/1.jpg" alt="Our representative" class="w-60 sm:w-72 md:w-[20rem] h-auto object-contain drop-shadow" />
+          <div class="md:col-span-5 flex md:block justify-center">
+            <img src="assets/images/about/1.jpg" alt="Our representative" class="w-60 sm:w-72 md:w-[30rem] h-auto object-contain drop-shadow" />
           </div>
         </div>
         <!-- Bottom gallery -->
