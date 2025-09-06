@@ -56,17 +56,8 @@ AddDefaultCharset utf-8
   # Bypass all rules for these directories
   RewriteRule ^(apis|admin)(/.*)?$ - [L]
 
-  # (Optional) Force HTTPS — uncomment if you want
-  # RewriteCond %{HTTPS} !=on
-  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-  # (Optional) Force non-www — use ONE of these blocks
-  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  # RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
-
-  # (Optional) Or force www
-  # RewriteCond %{HTTP_HOST} !^www\. [NC]
-  # RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # Allow direct access to common pages (no rewrite)
+  RewriteRule ^(about|contact|products|brands|inquiry_form|category|other-page-name)$ - [L]
 
   # Front controller: only if the request is NOT an existing file/dir
   RewriteCond %{REQUEST_FILENAME} !-f
