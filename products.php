@@ -105,7 +105,7 @@
     imgWrap.addEventListener('click', () => {
       // Navigate to product detail page with product ID
       const productId = item.id;
-      window.location.href = `product_detail.php?id=${productId}`;
+      window.location.href = `product_detail?id=${productId}`;
     });
 
     imgWrap.appendChild(img);

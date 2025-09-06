@@ -1,5 +1,5 @@
 <!-- RANDOM PRODUCTS SECTION -->
-<section id="random-products" class="py-12 md:py-16 bg-gray-100">
+<section id="random-products" class="py-12 md:py-16">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Title -->
@@ -25,7 +25,7 @@
 
     <!-- Load more -->
     <div class="mt-6 text-center">
-      <a href="products.php"
+      <a href="products?category=wood working"
          class="text-sm md:text-base tracking-wide text-gray-700 hover:text-red-600">
         LOAD MORE ...
       </a>
