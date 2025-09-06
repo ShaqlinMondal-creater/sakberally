@@ -19,7 +19,7 @@
           <img src="assets/images/about/about_content.jpg" alt="S Akberally &amp; Co brochure"
             class="w-full sm:w-[210px] md:w-[230px] lg:w-[250px] h-auto rounded-xl shadow-lg object-cover flex-shrink-0" />
 
-          <div class="text-gray-100 text-base sm:text-lg md:text-lg leading-5 sm:leading-6 md:leading-7">
+          <div class="text-gray-100 text-base sm:text-sm md:text-sm leading-5 sm:leading-6 md:leading-6">
             <p>
               137, B.R.B Basu Road, (Canning Street) Kolkata-700001, West Bengal, India.
               S. Akberally &amp; Co is a leading trading company in Kolkata, West Bengal, India.
