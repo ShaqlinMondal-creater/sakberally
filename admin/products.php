@@ -45,6 +45,7 @@
             <th class="px-4 py-3 font-medium">Price</th>
             <th class="px-4 py-3 font-medium">Features</th>
             <th class="px-4 py-3 font-medium">Updated Image</th>
+            <th class="px-4 py-3 font-medium">Actions</th> <!-- New column for actions -->
           </tr>
         </thead>
         <tbody id="tbodyProducts" class="divide-y">
@@ -115,7 +116,7 @@
   function renderRows(products) {
     $tbody.innerHTML = '';
     if (!products || !products.length) {
-      $tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No products found</td></tr>`;
+      $tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No products found</td></tr>`;
       return;
     }
 
@@ -144,6 +145,29 @@
         </td>
         <td class="px-4 py-3">
           ${image ? '<a href="'+image+'" target="_blank" class="text-brand hover:underline">Open</a>' : '—'}
+        </td>
+        <td class="px-4 py-3">
+          <!-- Action Buttons (Delete, Update, Others) -->
+          <div class="flex gap-2">
+            <!-- Delete Button -->
+            <button class="text-red-600 hover:text-red-800" title="Delete">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+              </svg>
+            </button>
+            <!-- Update Button -->
+            <button class="text-blue-600 hover:text-blue-800" title="Update">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+              </svg>
+            </button>
+            <!-- Others Button -->
+            <button class="text-green-600 hover:text-green-800" title="Other Actions">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+              </svg>
+            </button>
+          </div>
         </td>
       `;
       frag.appendChild(tr);
@@ -192,7 +216,7 @@
     } catch (err) {
       console.error(err);
       $msg.textContent = 'Failed to fetch products';
-      $tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-red-600">Error loading products</td></tr>`;
+      $tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-red-600">Error loading products</td></tr>`;
       state.count = 0;
       updateMeta();
     } finally {
@@ -201,7 +225,6 @@
   }
 
   /* ======= EVENTS ======= */
-  // Debounce helper
   function debounce(fn, ms=350){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
   $search.addEventListener('input', debounce(e => {
@@ -236,7 +259,6 @@
 
   /* ======= INIT ======= */
   (function init(){
-    // copy search from topbar to filter on load
     $search.value = '';
     fetchProducts();
   })();
