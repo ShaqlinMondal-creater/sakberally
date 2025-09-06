@@ -6,29 +6,29 @@
 
         <!-- PRODUCTS (dynamic) -->
         <section id="products" class="home_products py-12 md:py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Filters (no apply button, fetch on selection/typing) -->
-            <div class="mb-6 flex justify-end gap-3">
-                <input id="searchInput" type="text" placeholder="Search product name…" class="w-60 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
-                <select id="categorySelect" class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
-                    <option value="">All Categories</option>
-                    <option value="Wood Working Machine">Wood Working Machine</option>
-                    <option value="Pressure Washer Pump">Pressure Washer Pump</option>
-                    <option value="Construction Machine">Construction Machine</option>
-                    <!-- add more categories as needed -->
-                </select>
-            </div>
-            <hr class="w-full mb-7 border border-gray-300">
-            <!-- Grid -->
-            <div id="productsGrid" class="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4"></div>
+              <!-- Filters (no apply button, fetch on selection/typing) -->
+              <div class="mb-6 flex justify-end gap-3">
+                  <input id="searchInput" type="text" placeholder="Search product name…" class="w-60 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                  <select id="categorySelect" class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                      <option value="">All Categories</option>
+                      <option value="Wood Working Machine">Wood Working Machine</option>
+                      <option value="Pressure Washer Pump">Pressure Washer Pump</option>
+                      <option value="Construction Machine">Construction Machine</option>
+                      <!-- add more categories as needed -->
+                  </select>
+              </div>
+              <hr class="w-full mb-7 border border-gray-300">
+              <!-- Grid -->
+              <div id="productsGrid" class="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4"></div>
 
-            <!-- Status -->
-            <div class="mt-6 text-center text-sm text-gray-600" id="countLabel"></div>
+              <!-- Status -->
+              <div class="mt-6 text-center text-sm text-gray-600" id="countLabel"></div>
 
-            <!-- Infinite scroll sentinel (hidden) -->
-            <div id="infiniteSentinel" class="h-6"></div>
-        </div>
+              <!-- Infinite scroll sentinel (hidden) -->
+              <div id="infiniteSentinel" class="h-6"></div>
+          </div>
         </section>
 
     </main>
