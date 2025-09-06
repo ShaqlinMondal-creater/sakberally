@@ -1,65 +1,100 @@
 <?php include("header.php"); ?>
-<?php $page= "Our Brands"; ?>
+<?php $page = "Our Brands"; ?>
 
-    <main class="mx-auto pt-[112px] md:pt-[112px]">
-        <?php include("inc/breadcrumb.php"); ?>
+<main class="mx-auto pt-[112px] md:pt-[112px]">
+    <?php include("inc/breadcrumb.php"); ?>
 
-        <?php
-            // Update these paths to your actual files (root-relative recommended)
-            $brands = [
-            [ 'name' => 'BAW',             'logo' => '/assets/images/brands/baw.png',        'pdf' => '/assets/pdfs/baw.pdf' ],
-            [ 'name' => 'Bosch',           'logo' => '/assets/images/brands/bosch.png',      'pdf' => '/assets/pdfs/bosch.pdf' ],
-            [ 'name' => 'Crompton Greaves','logo' => '/assets/images/brands/crompton.png',   'pdf' => null ],
-            [ 'name' => 'DeWALT',          'logo' => '/assets/images/brands/dewalt.png',     'pdf' => '/assets/pdfs/dewalt.pdf' ],
-            [ 'name' => 'Endico',          'logo' => '/assets/images/brands/endico.png',     'pdf' => '/assets/pdfs/endico.pdf' ],
-            [ 'name' => 'Hitachi',         'logo' => '/assets/images/brands/hitachi.png',    'pdf' => '/assets/pdfs/hitachi.pdf' ],
-            [ 'name' => 'Indef',           'logo' => '/assets/images/brands/indef.png',      'pdf' => '/assets/pdfs/indef.pdf' ],
-            [ 'name' => 'Inder',           'logo' => '/assets/images/brands/inder.png',      'pdf' => '/assets/pdfs/inder.pdf' ],
-            [ 'name' => 'Jai Modula',      'logo' => '/assets/images/brands/jai-modula.png', 'pdf' => null ],
-            [ 'name' => 'Jai WudPro',      'logo' => '/assets/images/brands/jai-wudpro.png', 'pdf' => null ],
-            [ 'name' => 'Kirloskar',       'logo' => '/assets/images/brands/kirloskar.png',  'pdf' => '/assets/pdfs/kirloskar.pdf' ],
-            [ 'name' => 'KisanKraft',      'logo' => '/assets/images/brands/kisankraft.png', 'pdf' => '/assets/pdfs/kisankraft.pdf' ],
-            ];
-            ?>
-
-            <section id="brands" class="py-10 md:py-14 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Title -->
-                <h3 class="text-center text-red-600 font-semibold text-xl sm:text-2xl md:text-3xl">
+    <!-- Brands Section -->
+    <section id="brands" class="py-10 md:py-14 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Title -->
+            <h3 class="text-center text-red-600 font-semibold text-xl sm:text-2xl md:text-3xl">
                 Click on the Brand Logo to view detail PDF Catalogue
-                </h3>
+            </h3>
 
-                <!-- Grid -->
-                <div class="mt-8 md:mt-10 grid gap-x-10 gap-y-10
+            <!-- Grid -->
+            <div id="brandsGrid" class="mt-8 md:mt-10 grid gap-x-10 gap-y-10
                             grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 place-items-center">
-                <?php foreach ($brands as $b): ?>
-                    <?php
-                    $name = htmlspecialchars($b['name']);
-                    $logo = htmlspecialchars($b['logo']);
-                    $pdf  = $b['pdf'] ? htmlspecialchars($b['pdf']) : null;
-                    ?>
-
-                    <?php if ($pdf): ?>
-                    <!-- Clickable (opens PDF in new tab) -->
-                    <a href="<?= $pdf ?>" target="_blank" rel="noopener"
-                        class="group block p-2 sm:p-3 md:p-4 rounded transition-transform duration-200
-                                hover:scale-[1.04] focus:outline-none focus-visible:ring focus-visible:ring-red-500/40"
-                        title="View PDF: <?= $name ?>">
-                        <img src="<?= $logo ?>" alt="<?= $name ?> logo"
-                            class="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain">
-                    </a>
-                    <?php else: ?>
-                    <!-- Not clickable -->
-                    <div class="block p-2 sm:p-3 md:p-4 rounded cursor-default" title="<?= $name ?>">
-                        <img src="<?= $logo ?>" alt="<?= $name ?> logo"
-                            class="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain opacity-100">
-                    </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                </div>
+                <!-- Brand items will be injected here -->
             </div>
-            </section>
-
-    </main>
+        </div>
+    </section>
+</main>
 
 <?php include("footer.php"); ?>
+
+<script>
+  // API URL for fetching brands
+  const API_URL = 'https://sakberally.com/apis/brands/fetch.php';
+
+  // Function to fetch the brands from the API
+  async function fetchBrands() {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          limit: 100, // set the limit to 100 as per your request
+          offset: 0,
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch brands');
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Request failed');
+      }
+
+      const brands = data.data.brands || [];
+
+      renderBrands(brands);
+    } catch (error) {
+      console.error(error);
+      alert('Error loading brands');
+    }
+  }
+
+  // Function to render the brands dynamically
+  function renderBrands(brands) {
+    const brandsGrid = document.getElementById('brandsGrid');
+    brandsGrid.innerHTML = ''; // Clear existing brands
+
+    if (brands.length === 0) {
+      brandsGrid.innerHTML = `<p class="text-center text-gray-500">No brands found.</p>`;
+      return;
+    }
+
+    // Loop through the brands and add them to the grid
+    brands.forEach(brand => {
+      const brandName = brand.name;
+      const logoPath = brand.brand_logo_path ? `https://sakberally.com/apis${brand.brand_logo_path.replace('../', '')}` : '';
+      const pdfPath = brand.brand_catalouge_path ? `https://sakberally.com/apis${brand.brand_catalouge_path.replace('../', '')}` : null;
+
+      const brandHTML = `
+        <div class="group block p-2 sm:p-3 md:p-4 rounded transition-transform duration-200
+                    hover:scale-[1.04] focus:outline-none focus-visible:ring focus-visible:ring-red-500/40">
+          ${pdfPath ? 
+            `<a href="${pdfPath}" target="_blank" rel="noopener" title="View PDF: ${brandName}">
+              <img src="${logoPath}" alt="${brandName} logo" class="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain">
+            </a>` 
+            : 
+            `<div class="block p-2 sm:p-3 md:p-4 rounded cursor-default" title="${brandName}">
+              <img src="${logoPath}" alt="${brandName} logo" class="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain opacity-100">
+            </div>`
+          }
+        </div>
+      `;
+
+      brandsGrid.innerHTML += brandHTML;
+    });
+  }
+
+  // Fetch the brands on page load
+  fetchBrands();
+</script>
