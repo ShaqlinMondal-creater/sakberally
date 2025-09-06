@@ -129,52 +129,161 @@
     [ $prev, $next ].forEach(b => v ? b.classList.add('btn-disabled') : b.classList.remove('btn-disabled'));
   }
 
-  function renderRows(categories) {
-    $tbody.innerHTML = '';
-    if (!categories || !categories.length) {
-      $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
-      return;
-    }
+  // function renderRows(categories) {
+  //   $tbody.innerHTML = '';
+  //   if (!categories || !categories.length) {
+  //     $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
+  //     return;
+  //   }
 
-    const frag = document.createDocumentFragment();
-    categories.forEach(c => {
-      // Replace '../' with the base URL in category image path
-      const image = c.category_image_path ? c.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+  //   const frag = document.createDocumentFragment();
+  //   categories.forEach(c => {
+  //     // Replace '../' with the base URL in category image path
+  //     const image = c.category_image_path ? c.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
-        <td class="px-4 py-3">
-          ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
-        </td>
-        <td class="px-4 py-3">
-          <!-- Action Buttons (Delete, Update, Others) -->
-          <div class="flex gap-2">
-            <!-- Delete Button -->
-            <button class="text-red-600 hover:text-red-800" title="Delete">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-              </svg>
-            </button>
-            <!-- Update Button -->
-            <button class="text-blue-600 hover:text-blue-800" title="Update">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-              </svg>
-            </button>
-            <!-- Others Button -->
-            <button class="text-green-600 hover:text-green-800" title="Other Actions">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-              </svg>
-            </button>
-          </div>
-        </td>
-      `;
-      frag.appendChild(tr);
-    });
-    $tbody.appendChild(frag);
+  //     const tr = document.createElement('tr');
+  //     tr.innerHTML = `
+  //       <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
+  //       <td class="px-4 py-3">
+  //         ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
+  //       </td>
+  //       <td class="px-4 py-3">
+  //         <!-- Action Buttons (Delete, Update, Others) -->
+  //         <div class="flex gap-2">
+  //           <!-- Delete Button -->
+  //           <button class="text-red-600 hover:text-red-800" title="Delete">
+  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+  //             </svg>
+  //           </button>
+  //           <!-- Update Button -->
+  //           <button class="text-blue-600 hover:text-blue-800" title="Update">
+  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+  //             </svg>
+  //           </button>
+  //           <!-- Others Button -->
+  //           <button class="text-green-600 hover:text-green-800" title="Other Actions">
+  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+  //             </svg>
+  //           </button>
+  //         </div>
+  //       </td>
+  //     `;
+  //     frag.appendChild(tr);
+  //   });
+  //   $tbody.appendChild(frag);
+  // }
+
+  // Render categories rows with action buttons
+function renderRows(categories) {
+  $tbody.innerHTML = '';
+  if (!categories || !categories.length) {
+    $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
+    return;
   }
+
+  const frag = document.createDocumentFragment();
+  categories.forEach(c => {
+    // Replace '../' with the base URL in category image path
+    const image = c.category_image_path ? c.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
+      <td class="px-4 py-3">
+        ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
+      </td>
+      <td class="px-4 py-3">
+        <!-- Action Buttons (Delete, Update, Others) -->
+        <div class="flex gap-2">
+          <!-- Delete Button -->
+          <button class="text-red-600 hover:text-red-800" title="Delete">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+            </svg>
+          </button>
+          <!-- Update Button -->
+          <button class="text-blue-600 hover:text-blue-800" title="Update" onclick="openUpdatePopup(${c.id}, '${c.name}', ${c.sort_no}, '${c.category_image_path}')">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+            </svg>
+          </button>
+          <!-- Other Button -->
+          <button class="text-green-600 hover:text-green-800" title="Other Actions">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+            </svg>
+          </button>
+        </div>
+      </td>
+    `;
+    frag.appendChild(tr);
+  });
+  $tbody.appendChild(frag);
+}
+
+// Open SweetAlert popup for updating category
+function openUpdatePopup(id, name, sort_no, category_image_path) {
+  Swal.fire({
+    title: 'Update Category',
+    html: `
+      <input type="text" id="categoryId" class="swal2-input" value="${id}" readonly />
+      <input type="text" id="categoryName" class="swal2-input" value="${name}" />
+      <input type="number" id="categorySortId" class="swal2-input" value="${sort_no}" />
+      <input type="file" id="categoryImage" class="swal2-input" accept="image/*" />
+    `,
+    focusConfirm: false,
+    preConfirm: () => {
+      const categoryName = document.getElementById('categoryName').value;
+      const categorySortId = document.getElementById('categorySortId').value;
+      const categoryImage = document.getElementById('categoryImage').files[0];
+      const categoryId = document.getElementById('categoryId').value;
+
+      if (!categoryName || !categorySortId) {
+        Swal.showValidationMessage('Please enter category name and sort id');
+      } else {
+        return {
+          id: categoryId,
+          name: categoryName,
+          sort_id: categorySortId,
+          category_image: categoryImage
+        };
+      }
+    }
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const formData = new FormData();
+      formData.append('id', result.value.id);
+      formData.append('name', result.value.name);
+      formData.append('sort_no', result.value.sort_id);
+      if (result.value.category_image) {
+        formData.append('category_image', result.value.category_image);
+      }
+      formData.append('token', localStorage.getItem('user_token')); // Pass token
+
+      try {
+        const response = await fetch('https://sakberally.com/apis/categories/update.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const json = await response.json();
+
+        if (json.success) {
+          Swal.fire('Success!', json.message, 'success');
+          fetchCategories(); // Re-fetch the categories after update
+        } else {
+          Swal.fire('Error!', json.message, 'error');
+        }
+      } catch (error) {
+        Swal.fire('Error!', 'Failed to update category', 'error');
+      }
+    }
+  });
+}
+
 
   function updateMeta() {
     const start = state.count ? state.offset + 1 : 0;
