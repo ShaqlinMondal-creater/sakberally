@@ -36,7 +36,7 @@
 
       categories.forEach(cat => {
         const name = (cat.name || '').trim();
-        const img  = cat.category_image_path
+        const img  = cat.category_image_path;
         // (cat.category_image_path && cat.category_image_path.trim())
         //               ? cat.category_image_path.trim()
         //               : 'assets/images/category_placeholder.jpg'; // add this file
