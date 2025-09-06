@@ -40,10 +40,7 @@
       <div class="relative max-w-3xl">
         <!-- Title with background image -->
         <div class="mb-4 sm:mb-6">
-          <div
-            class="inline-block bg-[url('assets/images/right_bg.png')] bg-center bg-contain bg-no-repeat
-                   rounded-tl-2xl shadow-lg
-                   w-full">
+          <div class="inline-block bg-[url('assets/images/right_bg.png')] bg-center bg-cover bg-no-repeat rounded-tl-3xl shadow-lg w-full">
             <span class="text-center block px-5 sm:px-6 md:px-8 py-2.5 sm:py-3.5 md:py-4 font-serif font-semibold text-2xl sm:text-4xl">
               Our Mission
             </span>
