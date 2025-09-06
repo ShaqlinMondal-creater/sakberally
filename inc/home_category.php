@@ -36,11 +36,8 @@
 
       categories.forEach(cat => {
         const name = (cat.name || '').trim();
-        const img  = cat.category_image_path;
-        // (cat.category_image_path && cat.category_image_path.trim())
-        //               ? cat.category_image_path.trim()
-        //               : 'assets/images/category_placeholder.jpg'; // add this file
-
+        const img  = cat.category_image_path ? cat.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+        
         const a = document.createElement('a');
         a.href = `products?category=${encodeURIComponent(name)}`;
         a.className = 'group flex flex-col items-center text-center select-none';
