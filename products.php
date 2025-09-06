@@ -124,7 +124,7 @@
     viewBtn.addEventListener('click', () => {
       // Navigate to product detail page with product ID
       const productId = item.id;
-      window.location.href = `product_detail.php?id=${productId}`;
+      window.location.href = `product_detail?id=${productId}`;
     });
 
     footer.appendChild(viewBtn);
