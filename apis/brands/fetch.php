@@ -14,8 +14,8 @@ $offset = isset($in['offset']) ? max(0, (int)$in['offset']) : 0;
 $sql = "
   SELECT 
     b.id, b.name, b.brand_logo, b.catalouge_id,
-    ul.file_path AS brand_logo_path,
-    uc.file_path AS brand_catalouge_path
+    ul.file_original_name AS brand_logo_path,
+    uc.file_original_name AS brand_catalouge_path
   FROM t_brands b
   LEFT JOIN t_uploads ul ON ul.id = b.brand_logo
   LEFT JOIN t_uploads uc ON uc.id = b.catalouge_id
