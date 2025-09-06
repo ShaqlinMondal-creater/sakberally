@@ -7,7 +7,7 @@
   <section class="bg-white rounded-xl shadow p-4">
     <div class="flex flex-col md:flex-row gap-3 md:items-center">
       <div class="flex gap-2">
-        <button id="btnAdd" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700">Add Brand</button>
+        <button id="btnAdd" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700" onclick="openAddBrandPopup()">Add Brand</button>
       </div>
 
       <div class="md:ml-auto grid grid-cols-2 sm:grid-cols-4 gap-2 w-full md:w-auto">
@@ -54,7 +54,34 @@
       </nav>
     </div>
   </section>
+
 </main>
+
+<!-- Add Brand Popup (Hidden by default) -->
+<div id="addBrandPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden justify-center items-center">
+  <div class="bg-white p-6 rounded-lg w-1/3">
+    <h3 class="text-xl font-semibold mb-4">Add New Brand</h3>
+    <form id="addBrandForm" enctype="multipart/form-data">
+      <div class="mb-4">
+        <label for="brandName" class="block text-sm font-medium text-gray-700">Brand Name</label>
+        <input type="text" id="brandName" name="name" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
+      </div>
+      <div class="mb-4">
+        <label for="brandLogo" class="block text-sm font-medium text-gray-700">Brand Logo</label>
+        <input type="file" id="brandLogo" name="brand_logo" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
+      </div>
+      <div class="mb-4">
+        <label for="brandCatalogue" class="block text-sm font-medium text-gray-700">Brand Catalogue</label>
+        <input type="file" id="brandCatalogue" name="brand_catalogue" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" />
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" class="px-4 py-2 rounded-lg bg-gray-300 text-white" onclick="closeAddBrandPopup()">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700">Save Brand</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -62,11 +89,12 @@
   /* ======= CONFIG ======= */
   const BASE_URL = 'https://sakberally.com/apis';
   const API_URL  = BASE_URL + '/brands/fetch.php';
+  const CREATE_API_URL = BASE_URL + '/brands/create.php'; // API for creating brand
 
   /* ======= STATE ======= */
   const state = {
     name: '',          // search
-    limit: 100,        // limit set to 100 as requested
+    limit: 100,        // limit set to 100
     offset: 0,
     count: 0,
     loading: false
@@ -81,6 +109,12 @@
   const $next    = document.getElementById('btnNext');
   const $search  = document.getElementById('searchName');
   const $limit   = document.getElementById('limit');
+  
+  const $addBrandPopup = document.getElementById('addBrandPopup');
+  const $addBrandForm  = document.getElementById('addBrandForm');
+  const $brandName     = document.getElementById('brandName');
+  const $brandLogo     = document.getElementById('brandLogo');
+  const $brandCatalogue = document.getElementById('brandCatalogue');
 
   /* ======= HELPERS ======= */
   const imgOr = (a, b) => a || b || '';
@@ -187,10 +221,49 @@
     }
   }
 
-  /* ======= EVENTS ======= */
-  // Debounce helper
-  function debounce(fn, ms=350){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+  // Open the add brand popup
+  function openAddBrandPopup() {
+    $addBrandPopup.classList.remove('hidden');
+  }
 
+  // Close the add brand popup
+  function closeAddBrandPopup() {
+    $addBrandPopup.classList.add('hidden');
+  }
+
+  // Handle brand form submission
+  $addBrandForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem('user_token');
+    const formData = new FormData();
+    formData.append('name', $brandName.value);
+    formData.append('brand_logo', $brandLogo.files[0]);
+    formData.append('brand_catalogue', $brandCatalogue.files[0]);
+    formData.append('token', token); // Include the token in the form data
+
+    try {
+      const res = await fetch(CREATE_API_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      const json = await res.json();
+
+      if (json.success) {
+        alert('Brand created successfully!');
+        closeAddBrandPopup();
+        fetchBrands(); // Re-fetch the brands list to update the table
+      } else {
+        alert('Error: ' + json.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to create brand');
+    }
+  });
+
+  /* ======= EVENTS ======= */
   $search.addEventListener('input', debounce(e => {
     state.name = e.target.value.trim();
     state.offset = 0;
