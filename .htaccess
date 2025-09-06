@@ -23,8 +23,8 @@ Options -Indexes
   # Allow products page with category query parameters
   RewriteRule ^products$ products.php [L]
 
-  # Allow products page with category query parameters
-  RewriteRule ^products$ products.php [L]
+   # Allow product_detail page with id query parameter
+  RewriteRule ^product_detail$ product_detail.php [L]
 
   # Redirect all other non-existent files to index.php (front controller)
   RewriteCond %{REQUEST_FILENAME} !-f
