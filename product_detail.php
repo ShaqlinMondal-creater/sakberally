@@ -2,7 +2,7 @@
 <?php include("header.php"); ?>
 <?php $page= "Product Detail"; ?>
 <main class="mx-auto pt-[112px] md:pt-[112px]">
-  <?php include("inc/breadcrumb.php"); ?>
+  <?php //include("inc/breadcrumb.php"); ?>
 
 
 <!-- Product Detail Section -->

@@ -9,11 +9,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Filters (no apply button, fetch on selection/typing) -->
-            <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="mb-6 flex justify-end gap-3">
             <input id="searchInput" type="text" placeholder="Search product name…"
-                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                    class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
             <select id="categorySelect"
-                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
+                    class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                 <option value="">All Categories</option>
                 <option value="Wood Working">Wood Working</option>
                 <!-- add more categories as needed -->
@@ -32,10 +32,10 @@
         </section>
 
     </main>
-    <script>
+<script>
         // ====== CONFIG ======
         const BASE_URL = "<?php echo BASE_URL; ?>"; // <-- replace this
-        const API_URL = `${BASE_URL}/products/fetch.php`;
+         const API_URL = `${BASE_URL}/products/fetch.php`;
 
   // URL params
   const params = new URLSearchParams(location.search);
@@ -85,9 +85,16 @@
     return 'assets/images/placeholder-product.png';
   }
 
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  }
+
   function createCard(item) {
     const card = document.createElement('article');
-    card.className = "group border border-red-200 bg-white overflow-hidden rounded";
+    card.className = "group border border-red-200 bg-white overflow-hidden rounded cursor-pointer";
 
     const imgWrap = document.createElement('div');
     imgWrap.className = "h-40 sm:h-48 md:h-60 lg:h-72 flex items-center justify-center p-4 sm:p-6";
@@ -96,28 +103,32 @@
     img.alt = item.name || '';
     img.className = "max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]";
     img.onerror = () => { img.src = 'assets/images/placeholder-product.png'; };
+
+    imgWrap.addEventListener('click', () => {
+      // Navigate to product detail page with product ID
+      const productId = item.id;
+      window.location.href = `product_detail.php?id=${productId}`;
+    });
+
     imgWrap.appendChild(img);
 
     const title = document.createElement('div');
     title.className = "h-20 title bg-red-600 text-white text-center uppercase tracking-wide font-serif font-semibold text-xs sm:text-sm md:text-base leading-tight flex items-center justify-center px-2";
-    title.textContent = item.name || '';
+    title.textContent = truncateText(item.name, 20); // Truncate if more than 20 chars
 
     const footer = document.createElement('div');
     footer.className = "px-3 py-2 flex items-center justify-between text-sm";
-    const price = document.createElement('div');
-    price.className = "font-medium text-gray-800";
-    price.textContent = fmtPrice(item.price);
-
+    
+    // Replace price and view with "View Specification"
     const viewBtn = document.createElement('button');
     viewBtn.className = "text-red-600 hover:text-red-700 font-semibold";
-    viewBtn.textContent = "View";
+    viewBtn.textContent = "View Specification";
     viewBtn.addEventListener('click', () => {
       // Navigate to product detail page with product ID
       const productId = item.id;
       window.location.href = `product_detail.php?id=${productId}`;
     });
 
-    footer.appendChild(price);
     footer.appendChild(viewBtn);
 
     card.appendChild(imgWrap);
@@ -238,6 +249,7 @@
   // If URL had a category, keep it & use category behavior automatically.
   fetchProducts(false);
   io.observe(sentinel);
+</script>
 </script>
 
 <?php include("footer.php"); ?>
