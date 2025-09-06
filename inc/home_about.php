@@ -11,17 +11,15 @@
       <!-- LEFT: Image + About text -->
       <div class="flex flex-col gap-6 max-w-4xl">
         <!-- Heading -->
-        <h2 class="font-serif font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+        <h2 class="font-serif font-semibold text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
           About S Akberally &amp; Co
         </h2>
 
         <div class="flex flex-col sm:flex-row gap-6 items-start">
-          <img
-            src="assets/images/about/about_content.jpg"
-            alt="S Akberally &amp; Co brochure"
-            class="w-full sm:w-[240px] md:w-[260px] lg:w-[300px] h-auto rounded-xl shadow-lg object-cover flex-shrink-0" />
+          <img src="assets/images/about/about_content.jpg" alt="S Akberally &amp; Co brochure"
+            class="w-full sm:w-[210px] md:w-[230px] lg:w-[250px] h-auto rounded-xl shadow-lg object-cover flex-shrink-0" />
 
-          <div class="text-gray-100 text-[14px] sm:text-[15px] leading-[1.55] sm:leading-[1.6]">
+          <div class="text-gray-100 text-base sm:text-lg md:text-lg leading-5 sm:leading-6 md:leading-7">
             <p>
               137, B.R.B Basu Road, (Canning Street) Kolkata-700001, West Bengal, India.
               S. Akberally &amp; Co is a leading trading company in Kolkata, West Bengal, India.
@@ -43,23 +41,17 @@
         <!-- Title with background image -->
         <div class="mb-4 sm:mb-6">
           <div
-            class="inline-block bg-[url('assets/images/right_bg.png')] bg-center bg-cover bg-no-repeat
-                   border-2 border-red-700 rounded-tl-2xl shadow-lg
-                   w-full xs:w-4/5 sm:w-3/4 md:w-2/3">
-            <span class="block px-5 sm:px-6 md:px-8 py-2.5 sm:py-3.5 md:py-4 font-serif font-semibold text-2xl sm:text-3xl">
+            class="inline-block bg-[url('assets/images/right_bg.png')] bg-center bg-contain bg-no-repeat
+                   rounded-tl-2xl shadow-lg
+                   w-full">
+            <span class="text-center block px-5 sm:px-6 md:px-8 py-2.5 sm:py-3.5 md:py-4 font-serif font-semibold text-2xl sm:text-4xl">
               Our Mission
             </span>
           </div>
         </div>
 
-        <div class="relative text-gray-100 text-base sm:text-lg md:text-xl leading-7 sm:leading-8 md:leading-9">
+        <div class="relative text-gray-100 text-base sm:text-lg md:text-lg leading-5 sm:leading-6 md:leading-7">
           <!-- Watermark (hidden on small screens) -->
-          <img
-            src="assets/images/mission_watermark.png"
-            alt=""
-            aria-hidden="true"
-            class="hidden md:block pointer-events-none select-none opacity-20 absolute -right-4 md:-right-6 bottom-0 w-44 md:w-60" />
-
           <p>
             S. Akberally &amp; Co is committed to providing superior customer service and the best possible value in
             quality products and services. We strive to meet the needs of our broad customer and supplier base through
