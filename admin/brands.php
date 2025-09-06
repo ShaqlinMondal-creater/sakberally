@@ -86,6 +86,15 @@
 </div>
 
 <script>
+  // Debounce helper
+  function debounce(fn, ms=350) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
   /* ======= CONFIG ======= */
   const BASE_URL = 'https://sakberally.com/apis';
   const API_URL  = BASE_URL + '/brands/fetch.php';
@@ -297,3 +306,4 @@
 
 </body>
 </html>
+
