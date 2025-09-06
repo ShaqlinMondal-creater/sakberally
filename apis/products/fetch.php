@@ -6,11 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
 }
 
-$in       = read_json_body();
-$name     = isset($in['name'])     ? trim((string)$in['name'])     : '';
-$category = isset($in['category']) ? trim((string)$in['category']) : '';
-$limit    = isset($in['limit'])    ? max(1, (int)$in['limit'])     : 10;
-$offset   = isset($in['offset'])   ? max(0, (int)$in['offset'])    : 0;
+$in         = read_json_body();
+$name       = isset($in['name'])     ? trim((string)$in['name'])     : '';
+$category   = isset($in['category']) ? trim((string)$in['category']) : '';
+$productId  = isset($in['id'])       ? (int)$in['id']                : 0;   // NEW
+$limit      = isset($in['limit'])    ? max(1, (int)$in['limit'])     : 10;
+$offset     = isset($in['offset'])   ? max(0, (int)$in['offset'])    : 0;
 
 // Helper: bind params by reference for dynamic prepared statements
 function bind_params_by_ref(mysqli_stmt $stmt, string $types, array $params): void {
@@ -35,6 +36,11 @@ $conds  = [];
 $params = [];
 $types  = '';
 
+if ($productId > 0) {
+    $conds[]  = "p.id = ?";
+    $params[] = $productId;
+    $types   .= 'i';
+}
 if ($name !== '') {
     $conds[]  = "p.name LIKE ?";
     $params[] = '%' . $name . '%';
@@ -50,7 +56,7 @@ if ($conds) {
     $sql .= " WHERE " . implode(' AND ', $conds);
 }
 
-$sql .= " ORDER BY p.id DESC LIMIT ? OFFSET ?";
+$sql .= " ORDER BY p.id ASC LIMIT ? OFFSET ?";
 $params[] = $limit;  $types .= 'i';
 $params[] = $offset; $types .= 'i';
 
@@ -71,7 +77,7 @@ while ($r = $res->fetch_assoc()) {
         'upd_link'          => $r['upd_link'],
         'upload_id'         => $r['upload_id'] ? (int)$r['upload_id'] : null,
         'upload_path'       => $r['upload_path'] ?? null,
-        'features'          => $r['features'],          // as stored (e.g., HTML/table)
+        'features'          => $r['features'],
         'description'       => $r['description'],
         'short_description' => $r['short_description']
     ];
