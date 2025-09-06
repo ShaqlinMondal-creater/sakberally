@@ -41,7 +41,7 @@
                       : 'assets/images/category_placeholder.jpg'; // add this file
 
         const a = document.createElement('a');
-        a.href = `products.php?category=${encodeURIComponent(name)}`;
+        a.href = `products?category=${encodeURIComponent(name)}`;
         a.className = 'group flex flex-col items-center text-center select-none';
 
         a.innerHTML = `
