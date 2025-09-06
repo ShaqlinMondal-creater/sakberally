@@ -10,7 +10,7 @@
 .nav-link:focus-visible,
 .group:hover > .nav-link {
   color: #fff !important;
-  background-image: url('assets/images/link_bg.png');
+  background-image: url('/assets/images/link_bg.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
