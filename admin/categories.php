@@ -81,6 +81,15 @@
 </div>
 
 <script>
+  // Debounce function to limit the rate of function execution
+  function debounce(fn, ms = 350) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), ms);
+    };
+  }
+
   /* ======= CONFIG ======= */
   const BASE_URL = 'https://sakberally.com/apis';
   const FETCH_API_URL = BASE_URL + '/categories/fetch.php';  // Fetch Categories
@@ -284,6 +293,7 @@
     fetchCategories();
   })();
 </script>
+
 
 </body>
 </html>
