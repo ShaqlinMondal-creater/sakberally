@@ -19,6 +19,7 @@
     }
   </script>
 </head>
+<?php include('api_config.php'); ?>
 <body class="min-h-screen bg-gray-50 text-gray-900">
 
   <div class="flex justify-center items-center min-h-screen">
