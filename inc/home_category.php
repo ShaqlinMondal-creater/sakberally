@@ -51,7 +51,7 @@
                         transition duration-200 group-hover:scale-105"
                  onerror="this.onerror=null;this.src='assets/images/category_placeholder.jpg'">
           </span>
-          <span class="mt-4 font-serif text-base sm:text-lg tracking-wide uppercase text-gray-700
+          <span class="mt-4 font-serif text-base sm:text-sm tracking-wide uppercase text-gray-700
                        transition group-hover:text-red-600">
             ${name}
           </span>

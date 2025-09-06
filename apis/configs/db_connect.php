@@ -7,6 +7,12 @@ $DB_USER = 'root';
 $DB_PASS = '';
 $DB_NAME = 'sakberally_';
 
+// For Server
+$DB_HOST = 'localhost';
+$DB_USER = 'sakberally_';
+$DB_PASS = '@7Uvqi429';
+$DB_NAME = 'sakberally_';
+
 $mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
 if ($mysqli->connect_errno) {
     http_response_code(500);
