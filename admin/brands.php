@@ -135,119 +135,58 @@
     [ $prev, $next ].forEach(b => v ? b.classList.add('btn-disabled') : b.classList.remove('btn-disabled'));
   }
 
-//   function renderRows(brands) {
-//     $tbody.innerHTML = '';
-//     if (!brands || !brands.length) {
-//       $tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">No brands found</td></tr>`;
-//       return;
-//     }
+  function renderRows(brands) {
+    $tbody.innerHTML = '';
+    if (!brands || !brands.length) {
+      $tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">No brands found</td></tr>`;
+      return;
+    }
 
-//     const frag = document.createDocumentFragment();
-//     brands.forEach(b => {
-//       const tr = document.createElement('tr');
+    const frag = document.createDocumentFragment();
+    brands.forEach(b => {
+      const tr = document.createElement('tr');
 
-//       const logo = imgOr(b.brand_logo_path, '../uploads/brands/logo/placeholder.jpg');
-//       const catalog = imgOr(b.brand_catalouge_path, '#');
+      // Replace '../' with the base URL in brand paths
+        const logo = b.brand_logo_path ? b.brand_logo_path.replace('../', 'https://sakberally.com/apis/') : '';
+        const catalog = b.brand_catalouge_path ? b.brand_catalouge_path.replace('../', 'https://sakberally.com/apis/') : '#';
 
-//       tr.innerHTML = `
-//         <td class="px-4 py-3">${escapeHtml(b.name || '')}</td>
-//         <td class="px-4 py-3">
-//           <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-cover rounded bg-gray-100">
-//         </td>
-//         <td class="px-4 py-3">
-//           ${catalog ? `<a href="${catalog}" target="_blank" class="text-brand hover:underline">View</a>` : '—'}
-//         </td>
-//         <td class="px-4 py-3">
-//           <!-- Action Buttons (Delete, Update, Others) -->
-//           <div class="flex gap-2">
-//             <!-- Delete Button -->
-//             <button class="text-red-600 hover:text-red-800" title="Delete">
-//               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-//               </svg>
-//             </button>
-//             <!-- Update Button -->
-//             <button class="text-blue-600 hover:text-blue-800" title="Update">
-//               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-//               </svg>
-//             </button>
-//             <!-- Others Button -->
-//             <button class="text-green-600 hover:text-green-800" title="Other Actions">
-//               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-//               </svg>
-//             </button>
-//           </div>
-//         </td>
-//       `;
-//       frag.appendChild(tr);
-//     });
-//     $tbody.appendChild(frag);
-//   }
 
-// Assuming 'brand_logo_path' and 'brand_catalouge_path' are part of the brand object
-function updateBrandPaths(brand) {
-  // Replace '../' with the actual base URL
-  brand.brand_logo_path = brand.brand_logo_path.replace('../', 'https://sakberally.com/apis/');
-  brand.brand_catalouge_path = brand.brand_catalouge_path.replace('../', 'https://sakberally.com/apis/');
-  return brand;
-}
-
-// Example of using it when rendering the brand data
-function renderRows(brands) {
-  $tbody.innerHTML = '';
-  if (!brands || !brands.length) {
-    $tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">No brands found</td></tr>`;
-    return;
+      tr.innerHTML = `
+        <td class="px-4 py-3">${escapeHtml(b.name || '')}</td>
+        <td class="px-4 py-3">
+          <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-cover rounded bg-gray-100">
+        </td>
+        <td class="px-4 py-3">
+          ${catalog ? `<a href="${catalog}" target="_blank" class="text-brand hover:underline">View</a>` : '—'}
+        </td>
+        <td class="px-4 py-3">
+          <!-- Action Buttons (Delete, Update, Others) -->
+          <div class="flex gap-2">
+            <!-- Delete Button -->
+            <button class="text-red-600 hover:text-red-800" title="Delete">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+              </svg>
+            </button>
+            <!-- Update Button -->
+            <button class="text-blue-600 hover:text-blue-800" title="Update">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+              </svg>
+            </button>
+            <!-- Others Button -->
+            <button class="text-green-600 hover:text-green-800" title="Other Actions">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      `;
+      frag.appendChild(tr);
+    });
+    $tbody.appendChild(frag);
   }
-
-  const frag = document.createDocumentFragment();
-  brands.forEach(b => {
-    // Update paths before rendering
-    b = updateBrandPaths(b);
-
-    const tr = document.createElement('tr');
-    const logo = b.brand_logo_path || '../uploads/brands/logo/placeholder.jpg';
-    const catalog = b.brand_catalouge_path || '#';
-
-    tr.innerHTML = `
-      <td class="px-4 py-3">${escapeHtml(b.name || '')}</td>
-      <td class="px-4 py-3">
-        <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-cover rounded bg-gray-100">
-      </td>
-      <td class="px-4 py-3">
-        ${catalog ? `<a href="${catalog}" target="_blank" class="text-brand hover:underline">View</a>` : '—'}
-      </td>
-      <td class="px-4 py-3">
-        <!-- Action Buttons (Delete, Update, Others) -->
-        <div class="flex gap-2">
-          <!-- Delete Button -->
-          <button class="text-red-600 hover:text-red-800" title="Delete">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-            </svg>
-          </button>
-          <!-- Update Button -->
-          <button class="text-blue-600 hover:text-blue-800" title="Update">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-            </svg>
-          </button>
-          <!-- Others Button -->
-          <button class="text-green-600 hover:text-green-800" title="Other Actions">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-            </svg>
-          </button>
-        </div>
-      </td>
-    `;
-    frag.appendChild(tr);
-  });
-  $tbody.appendChild(frag);
-}
-
 
   function updateMeta() {
     const start = state.count ? state.offset + 1 : 0;
