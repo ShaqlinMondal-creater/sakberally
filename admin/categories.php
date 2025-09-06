@@ -225,7 +225,6 @@ function renderRows(categories) {
 }
 
 // Open SweetAlert popup for updating category
-// Open SweetAlert popup for updating category
 function openUpdatePopup(id, name, sort_no, category_image_path) {
   Swal.fire({
     title: 'Update Category',
@@ -234,6 +233,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       <input type="text" id="categoryName" class="swal2-input" value="${name}" />
       <input type="number" id="categorySortId" class="swal2-input" value="${sort_no}" />
       <input type="file" id="categoryImage" class="swal2-input" accept="image/*" />
+      ${category_image_path ? `<img src="${category_image_path}" alt="Current Image" class="w-16 h-16 mt-2" />` : ''}
     `,
     focusConfirm: false,
     preConfirm: () => {
@@ -242,7 +242,6 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       const categoryImage = document.getElementById('categoryImage').files[0];
       const categoryId = document.getElementById('categoryId').value;
 
-      // Validation only if fields are empty and require update
       if (!categoryName && !categoryImage && !categorySortId) {
         Swal.showValidationMessage('Please enter at least one field to update');
       } else {
@@ -258,18 +257,15 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
     if (result.isConfirmed) {
       const formData = new FormData();
       formData.append('id', result.value.id);
+      formData.append('name', result.value.name || ''); // Append the name (even if empty)
+      formData.append('sort_no', result.value.sort_id || 0); // Append the sort_no (even if empty)
 
-      // Append fields even if they are not modified
-      formData.append('name', result.value.name || '');  // Always append name (even empty)
-      formData.append('sort_no', result.value.sort_id || 0);  // Always append sort_no (even empty)
-      
-      // Only append category_image if a file is selected
+      // Only append category_image if a new file is selected, otherwise, send the current image path
       if (result.value.category_image) {
-        formData.append('category_image', result.value.category_image);  // Append image file if selected
+        formData.append('category_image', result.value.category_image); // Append the new image
       } else {
-        // If no new image is selected, we append the current image path or null
-        // It depends on your backend whether you need to send the current image or 'null'
-        formData.append('category_image', category_image_path || null);  // Retain the old image if no new one is selected
+        // If no new image selected, append the current image path (or null if no image exists)
+        formData.append('category_image', category_image_path || null);
       }
 
       formData.append('token', localStorage.getItem('user_token')); // Pass token
