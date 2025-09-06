@@ -17,7 +17,7 @@
                     <!-- add more categories as needed -->
                 </select>
             </div>
-            <hr class="w-full h-5 border-2 border-gray-300">
+            <hr class="w-full mb-7 border border-gray-300">
             <!-- Grid -->
             <div id="productsGrid" class="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4"></div>
 
