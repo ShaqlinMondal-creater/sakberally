@@ -86,7 +86,7 @@
   // Fetch product details from API
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('id');
-  const apiUrl = '{{base_url}}/products/fetch.php';
+  const apiUrl = '<?php echo BASE_URL; ?>/products/fetch.php';
   
   fetch(apiUrl, {
     method: 'POST',
