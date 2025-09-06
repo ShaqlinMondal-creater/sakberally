@@ -36,7 +36,7 @@
       <div id="status" class="text-gray-500"></div>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto h-96">
       <table class="min-w-full text-sm">
         <thead class="bg-gray-50">
           <tr class="text-left text-gray-600">
