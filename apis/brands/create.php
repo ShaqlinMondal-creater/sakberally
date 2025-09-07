@@ -142,19 +142,25 @@
 // create_brand.php
 require '../configs/db_connect.php';
 
+// Only POST allowed
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
 }
 
-if (!isset($_POST['token']) || trim($_POST['token']) === '') {
-    json_out(422, ['success' => false, 'message' => 'token is required']);
-}
-$token = trim($_POST['token']);
+// --- Get input ---
+$token = trim($_POST['token'] ?? '');
+$name  = trim($_POST['name'] ?? '');
 
-$name = trim((string)($_POST['name'] ?? ''));
-if ($name === '') {
-    json_out(422, ['success' => false, 'message' => 'name is required']);
+// If token or name is missing in POST, fallback to JSON body
+if ($token === '' || $name === '') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    if ($token === '') $token = trim($input['token'] ?? '');
+    if ($name === '')  $name  = trim($input['name'] ?? '');
 }
+
+// Validate mandatory fields
+if ($token === '') json_out(422, ['success' => false, 'message' => 'token is required']);
+if ($name === '')  json_out(422, ['success' => false, 'message' => 'name is required']);
 
 // --- Step 1: validate admin token ---
 $stmt = $mysqli->prepare("SELECT id, role FROM t_users WHERE token = ? LIMIT 1");
@@ -170,9 +176,7 @@ if (!$actor || $actor['role'] !== 'admin') {
 
 // --- Helpers ---
 function ensure_dir(string $dir): void {
-    if (!is_dir($dir)) {
-        @mkdir($dir, 0777, true);
-    }
+    if (!is_dir($dir)) @mkdir($dir, 0777, true);
 }
 
 function safe_ext(string $filename): string {
@@ -193,7 +197,7 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     $orig = $file['name'];
     $size = (int)$file['size'];
 
-    // Basic MIME validation
+    // Validate MIME type
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime  = $finfo->file($tmp) ?: 'application/octet-stream';
     if (!in_array($mime, $allowedMimes, true)) {
@@ -210,7 +214,6 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
         json_out(500, ['success' => false, 'message' => 'Failed to move uploaded file']);
     }
 
-    // build a portable file_path (forward slashes)
     $relPath = str_replace('\\', '/', $targetPath);
 
     // Insert into t_uploads
@@ -226,7 +229,7 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     return ['id' => $uploadId, 'path' => $relPath];
 }
 
-// --- Step 2: save brand_logo (optional) ---
+// --- Step 2: handle brand_logo (optional) ---
 $logo = null;
 if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] !== UPLOAD_ERR_NO_FILE) {
     $logoDir = '../uploads/brands/logo';
@@ -234,7 +237,7 @@ if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] !== UPLOAD_ER
     $logo = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed);
 }
 
-// --- Step 3: save catalouge (optional) ---
+// --- Step 3: handle catalouge (optional) ---
 $catalogue = null;
 if (isset($_FILES['catalouge']) && $_FILES['catalouge']['error'] !== UPLOAD_ERR_NO_FILE) {
     $catDir = '../uploads/brands/catalouge';
@@ -253,7 +256,7 @@ if (!$stmt->execute()) {
 $brandId = (int)$stmt->insert_id;
 $stmt->close();
 
-// --- Success response (201) ---
+// --- Success response ---
 json_out(201, [
     'success' => true,
     'message' => 'Brand created',
@@ -267,5 +270,6 @@ json_out(201, [
         'brand_id'             => $brandId
     ]
 ]);
+
 
 
