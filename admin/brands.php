@@ -247,13 +247,13 @@
   $addBrandForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('user_token');
-    console.log(token);
+    const atoken = localStorage.getItem('user_token');
+    console.log(atoken);
     const formData = new FormData();
+    formData.append('token', atoken); // Include the token in the form data
     formData.append('name', $brandName.value);
     formData.append('brand_logo', $brandLogo.files[0]);
-    formData.append('brand_catalogue', $brandCatalogue.files[0]);
-    formData.append('token', token); // Include the token in the form data
+    formData.append('brand_catalogue', $brandCatalogue.files[0]);    
 
     try {
       const res = await fetch(CREATE_API_URL, {
