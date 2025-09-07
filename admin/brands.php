@@ -219,7 +219,7 @@
       const data = json.data || { count: 0, brands: [] };
       state.count = Number(data.count) || 0;
 
-      alert(localStorage.getItem('user_token'));
+      // alert(localStorage.getItem('user_token'));
       renderRows(data.brands || []);
       updateMeta();
     } catch (err) {
