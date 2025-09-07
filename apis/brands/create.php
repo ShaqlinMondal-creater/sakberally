@@ -137,7 +137,7 @@
 
 
 
-// create_brand.php
+
 require '../configs/db_connect.php';
 
 // Only POST allowed
@@ -145,9 +145,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
 }
 
-// --- Step 1: Get mandatory fields ---
-$token = trim($_POST['token'] ?? '');
-$name  = trim($_POST['name'] ?? '');
+// --- Step 1: get input ---
+$input = $_POST;
+
+// If token not found in POST, try JSON body
+if (!isset($input['token'])) {
+    $raw = file_get_contents('php://input');
+    $json = json_decode($raw, true);
+    if (json_last_error() === JSON_ERROR_NONE && isset($json['token'])) {
+        $input['token'] = $json['token'];
+        $input['name'] = $json['name'] ?? '';
+    }
+}
+
+$token = trim($input['token'] ?? '');
+$name  = trim($input['name'] ?? '');
 
 if ($token === '') json_out(422, ['success' => false, 'message' => 'token is required']);
 if ($name === '')  json_out(422, ['success' => false, 'message' => 'name is required']);
@@ -168,49 +180,36 @@ if (!$actor || $actor['role'] !== 'admin') {
 function ensure_dir(string $dir): void {
     if (!is_dir($dir)) @mkdir($dir, 0777, true);
 }
-
 function safe_ext(string $filename): string {
     $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     return preg_replace('/[^a-z0-9]+/i', '', $ext);
 }
-
 function mk_filename(string $ext): string {
     return time() . '_' . bin2hex(random_bytes(4)) . ($ext ? ('.' . $ext) : '');
 }
-
 function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, string $destDir, array $allowedMimes, int $maxSize): array {
     if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
         json_out(422, ['success' => false, 'message' => 'Upload error', 'php_upload_error' => $file['error'] ?? 'unknown']);
     }
-
     $tmp  = $file['tmp_name'];
     $orig = $file['name'];
     $size = (int)$file['size'];
-
     if ($size > $maxSize) {
         json_out(422, ['success' => false, 'message' => "File too large. Max allowed: {$maxSize} bytes"]);
     }
-
-    // MIME validation
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime  = $finfo->file($tmp) ?: 'application/octet-stream';
     if (!in_array($mime, $allowedMimes, true)) {
         json_out(422, ['success' => false, 'message' => 'Invalid file type', 'mime' => $mime]);
     }
-
     $ext = safe_ext($orig);
     $filename = mk_filename($ext);
-
     ensure_dir($destDir);
     $targetPath = rtrim($destDir, '/\\') . DIRECTORY_SEPARATOR . $filename;
-
     if (!move_uploaded_file($tmp, $targetPath)) {
         json_out(500, ['success' => false, 'message' => 'Failed to move uploaded file']);
     }
-
     $relPath = str_replace('\\', '/', $targetPath);
-
-    // Insert into t_uploads
     $stmt = $mysqli->prepare("INSERT INTO t_uploads (purpose, file_original_name, file_path, size, extension) VALUES (?,?,?,?,?)");
     $stmt->bind_param('sssds', $purpose, $orig, $relPath, $size, $ext);
     if (!$stmt->execute()) {
@@ -218,24 +217,23 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     }
     $uploadId = (int)$stmt->insert_id;
     $stmt->close();
-
     return ['id' => $uploadId, 'path' => $relPath];
 }
 
-// --- Step 3: handle brand_logo (optional) ---
+// --- Step 3: handle brand_logo ---
 $logo = null;
 if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] !== UPLOAD_ERR_NO_FILE) {
     $logoDir = '../uploads/brands/logo';
     $logoAllowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    $logo = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed, 5 * 1024 * 1024); // 5 MB
+    $logo = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed, 5*1024*1024);
 }
 
-// --- Step 4: handle catalogue (optional) ---
+// --- Step 4: handle catalogue ---
 $catalogue = null;
 if (isset($_FILES['catalouge']) && $_FILES['catalouge']['error'] !== UPLOAD_ERR_NO_FILE) {
     $catDir = '../uploads/brands/catalouge';
     $catAllowed = ['application/pdf'];
-    $catalogue = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed, 50 * 1024 * 1024); // 50 MB
+    $catalogue = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed, 50*1024*1024);
 }
 
 // --- Step 5: insert brand ---
