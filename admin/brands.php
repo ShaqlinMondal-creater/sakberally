@@ -219,6 +219,7 @@
       const data = json.data || { count: 0, brands: [] };
       state.count = Number(data.count) || 0;
 
+      alert(localStorage.getItem('user_token'));
       renderRows(data.brands || []);
       updateMeta();
     } catch (err) {
@@ -247,6 +248,7 @@
     e.preventDefault();
 
     const token = localStorage.getItem('user_token');
+    alert.log(token);
     const formData = new FormData();
     formData.append('name', $brandName.value);
     formData.append('brand_logo', $brandLogo.files[0]);
