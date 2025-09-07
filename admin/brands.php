@@ -154,7 +154,7 @@
       tr.innerHTML = `
         <td class="px-4 py-3">${escapeHtml(b.name || '')}</td>
         <td class="px-4 py-3">
-          <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-cover rounded bg-gray-100">
+          <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-contain rounded bg-gray-100">
         </td>
         <td class="px-4 py-3">
           ${catalog ? `<a href="${catalog}" target="_blank" class="text-brand hover:underline">View</a>` : '—'}
