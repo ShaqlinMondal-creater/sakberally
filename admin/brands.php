@@ -248,7 +248,7 @@
     e.preventDefault();
 
     const token = localStorage.getItem('user_token');
-    alert.log(token);
+    console.log(token);
     const formData = new FormData();
     formData.append('name', $brandName.value);
     formData.append('brand_logo', $brandLogo.files[0]);
