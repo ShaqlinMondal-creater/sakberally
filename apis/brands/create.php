@@ -137,8 +137,6 @@
 
 
 
-
-
 // create_brand.php
 require '../configs/db_connect.php';
 
@@ -147,22 +145,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
 }
 
-// --- Get input ---
+// --- Step 1: Get mandatory fields ---
 $token = trim($_POST['token'] ?? '');
 $name  = trim($_POST['name'] ?? '');
 
-// If token or name is missing in POST, fallback to JSON body
-if ($token === '' || $name === '') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    if ($token === '') $token = trim($input['token'] ?? '');
-    if ($name === '')  $name  = trim($input['name'] ?? '');
-}
-
-// Validate mandatory fields
 if ($token === '') json_out(422, ['success' => false, 'message' => 'token is required']);
 if ($name === '')  json_out(422, ['success' => false, 'message' => 'name is required']);
 
-// --- Step 1: validate admin token ---
+// --- Step 2: validate admin token ---
 $stmt = $mysqli->prepare("SELECT id, role FROM t_users WHERE token = ? LIMIT 1");
 $stmt->bind_param('s', $token);
 $stmt->execute();
@@ -188,7 +178,7 @@ function mk_filename(string $ext): string {
     return time() . '_' . bin2hex(random_bytes(4)) . ($ext ? ('.' . $ext) : '');
 }
 
-function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, string $destDir, array $allowedMimes): array {
+function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, string $destDir, array $allowedMimes, int $maxSize): array {
     if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
         json_out(422, ['success' => false, 'message' => 'Upload error', 'php_upload_error' => $file['error'] ?? 'unknown']);
     }
@@ -197,7 +187,11 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     $orig = $file['name'];
     $size = (int)$file['size'];
 
-    // Validate MIME type
+    if ($size > $maxSize) {
+        json_out(422, ['success' => false, 'message' => "File too large. Max allowed: {$maxSize} bytes"]);
+    }
+
+    // MIME validation
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime  = $finfo->file($tmp) ?: 'application/octet-stream';
     if (!in_array($mime, $allowedMimes, true)) {
@@ -218,8 +212,7 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
 
     // Insert into t_uploads
     $stmt = $mysqli->prepare("INSERT INTO t_uploads (purpose, file_original_name, file_path, size, extension) VALUES (?,?,?,?,?)");
-    $extForDb = $ext ?: '';
-    $stmt->bind_param('sssds', $purpose, $orig, $relPath, $size, $extForDb);
+    $stmt->bind_param('sssds', $purpose, $orig, $relPath, $size, $ext);
     if (!$stmt->execute()) {
         json_out(500, ['success' => false, 'message' => 'Failed to insert upload record', 'error' => $stmt->error]);
     }
@@ -229,23 +222,23 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     return ['id' => $uploadId, 'path' => $relPath];
 }
 
-// --- Step 2: handle brand_logo (optional) ---
+// --- Step 3: handle brand_logo (optional) ---
 $logo = null;
 if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] !== UPLOAD_ERR_NO_FILE) {
     $logoDir = '../uploads/brands/logo';
     $logoAllowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    $logo = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed);
+    $logo = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed, 5 * 1024 * 1024); // 5 MB
 }
 
-// --- Step 3: handle catalouge (optional) ---
+// --- Step 4: handle catalogue (optional) ---
 $catalogue = null;
 if (isset($_FILES['catalouge']) && $_FILES['catalouge']['error'] !== UPLOAD_ERR_NO_FILE) {
     $catDir = '../uploads/brands/catalouge';
-    $catAllowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-    $catalogue = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed);
+    $catAllowed = ['application/pdf'];
+    $catalogue = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed, 50 * 1024 * 1024); // 50 MB
 }
 
-// --- Step 4: insert brand ---
+// --- Step 5: insert brand ---
 $stmt = $mysqli->prepare("INSERT INTO t_brands (name, brand_logo, catalouge_id) VALUES (?,?,?)");
 $logoId = $logo['id'] ?? null;
 $catalogueId = $catalogue['id'] ?? null;
@@ -256,7 +249,7 @@ if (!$stmt->execute()) {
 $brandId = (int)$stmt->insert_id;
 $stmt->close();
 
-// --- Success response ---
+// --- Step 6: success response ---
 json_out(201, [
     'success' => true,
     'message' => 'Brand created',
