@@ -2,8 +2,25 @@
 // create_brand.php
 require '../configs/db_connect.php';
 
+/**
+ * Early guard: if the body exceeded post_max_size, PHP discards POST/FILES.
+ * Return a clear 413 so you don’t get a misleading “token is required”.
+ */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
+}
+
+$contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength > 0 && empty($_POST) && empty($_FILES)) {
+    $postMax = ini_get('post_max_size') ?: 'unknown';
+    json_out(413, [
+        'success' => false,
+        'message' => 'Request entity too large. Increase post_max_size and upload_max_filesize.',
+        'details' => [
+            'CONTENT_LENGTH' => $contentLength,
+            'post_max_size'  => $postMax
+        ]
+    ]);
 }
 
 /* ------------------- Helpers ------------------- */
@@ -21,18 +38,23 @@ function mk_filename(string $ext): string {
 }
 
 /**
- * Move upload to disk and record in t_uploads
- * $allowedMimes: array of accepted MIME strings
- * $maxSizeBytes: optional max size (null = no limit)
+ * Save an uploaded file and record it in t_uploads
+ * - $allowedMimes: list of allowed MIME types
+ * - $maxSizeBytes: null for no limit; integer to enforce max
  */
 function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, string $destDir, array $allowedMimes, ?int $maxSizeBytes = null): array {
-    if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
-        json_out(422, ['success' => false, 'message' => 'Upload error', 'php_upload_error' => $file['error'] ?? 'unknown']);
+    // Standard PHP upload errors (other than NO_FILE) are rejected
+    if (!isset($file['error'])) {
+        json_out(422, ['success' => false, 'message' => 'Upload error: missing error code']);
+    }
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        // UPLOAD_ERR_NO_FILE is handled by caller; anything else is an error
+        json_out(422, ['success' => false, 'message' => 'Upload error', 'php_upload_error' => $file['error']]);
     }
 
     $tmp  = $file['tmp_name'];
-    $orig = $file['name'];
-    $size = (int)$file['size'];
+    $orig = $file['name'] ?? 'unknown';
+    $size = (int)($file['size'] ?? 0);
 
     if ($maxSizeBytes !== null && $size > $maxSizeBytes) {
         json_out(422, ['success' => false, 'message' => 'File too large', 'max_bytes' => $maxSizeBytes]);
@@ -44,7 +66,7 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
         json_out(422, ['success' => false, 'message' => 'Invalid file type', 'mime' => $mime]);
     }
 
-    $ext = safe_ext($orig);
+    $ext      = safe_ext($orig);
     $filename = mk_filename($ext);
 
     ensure_dir($destDir);
@@ -54,10 +76,10 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
         json_out(500, ['success' => false, 'message' => 'Failed to move uploaded file']);
     }
 
-    // Portable path with forward slashes for DB
+    // Normalize to forward slashes
     $relPath = str_replace('\\', '/', $targetPath);
 
-    // Save record in t_uploads
+    // Record upload
     $stmt = $mysqli->prepare("INSERT INTO t_uploads (purpose, file_original_name, file_path, size, extension) VALUES (?,?,?,?,?)");
     $extForDb = $ext ?: '';
     $stmt->bind_param('sssds', $purpose, $orig, $relPath, $size, $extForDb);
@@ -70,15 +92,12 @@ function move_and_record_upload(mysqli $mysqli, array $file, string $purpose, st
     return ['id' => $uploadId, 'path' => $relPath];
 }
 
-/* ------------------- Inputs (FORM-DATA only) ------------------- */
-
-// ✅ Token must come from form-data (or x-www-form-urlencoded)
+/* ------------------- Inputs (FORM-DATA ONLY) ------------------- */
 if (!isset($_POST['token']) || trim($_POST['token']) === '') {
     json_out(422, ['success' => false, 'message' => 'token is required']);
 }
 $token = trim($_POST['token']);
 
-// Name (also from form-data)
 $name = trim((string)($_POST['name'] ?? ''));
 if ($name === '') {
     json_out(422, ['success' => false, 'message' => 'name is required']);
@@ -102,29 +121,36 @@ $logoPath = null;
 $catalogueId = null;
 $cataloguePath = null;
 
-/* brand_logo: OPTIONAL image */
-if (isset($_FILES['brand_logo']) && $_FILES['brand_logo']['error'] !== UPLOAD_ERR_NO_FILE) {
-    $logoDir     = '../uploads/brands/logo';
-    $logoAllowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    $logo        = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed);
-    $logoId   = $logo['id'];
-    $logoPath = $logo['path'];
+/** brand_logo: OPTIONAL image */
+if (isset($_FILES['brand_logo'])) {
+    if ($_FILES['brand_logo']['error'] === UPLOAD_ERR_OK) {
+        $logoDir     = '../uploads/brands/logo';
+        $logoAllowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        $logo        = move_and_record_upload($mysqli, $_FILES['brand_logo'], 'brands', $logoDir, $logoAllowed);
+        $logoId   = $logo['id'];
+        $logoPath = $logo['path'];
+    } elseif ($_FILES['brand_logo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        json_out(422, ['success' => false, 'message' => 'brand_logo upload failed', 'php_upload_error' => $_FILES['brand_logo']['error']]);
+    }
 }
 
-/* catalouge: OPTIONAL PDF (max 50 MB) */
-if (isset($_FILES['catalouge']) && $_FILES['catalouge']['error'] !== UPLOAD_ERR_NO_FILE) {
-    $catDir     = '../uploads/brands/catalouge';
-    $catAllowed = ['application/pdf'];
-    $maxPdf     = 50 * 1024 * 1024; // 50 MB
-    $catalogue  = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed, $maxPdf);
-    $catalogueId   = $catalogue['id'];
-    $cataloguePath = $catalogue['path'];
+/** catalouge: OPTIONAL PDF (≤ 50 MB) */
+if (isset($_FILES['catalouge'])) {
+    if ($_FILES['catalouge']['error'] === UPLOAD_ERR_OK) {
+        $catDir     = '../uploads/brands/catalouge';
+        $catAllowed = ['application/pdf'];
+        $maxPdf     = 50 * 1024 * 1024; // 50 MB
+        $catalogue  = move_and_record_upload($mysqli, $_FILES['catalouge'], 'brands', $catDir, $catAllowed, $maxPdf);
+        $catalogueId   = $catalogue['id'];
+        $cataloguePath = $catalogue['path'];
+    } elseif ($_FILES['catalouge']['error'] !== UPLOAD_ERR_NO_FILE) {
+        json_out(422, ['success' => false, 'message' => 'catalouge upload failed', 'php_upload_error' => $_FILES['catalouge']['error']]);
+    }
 }
 
 /* ------------------- Insert brand ------------------- */
 /**
- * Make sure t_brands.brand_logo and t_brands.catalouge_id are NULLable:
- * ALTER TABLE t_brands MODIFY brand_logo INT NULL, MODIFY catalouge_id INT NULL;
+ * NOTE: Passing NULL to bind_param is OK; ensure table columns are NULLable.
  */
 $stmt = $mysqli->prepare("INSERT INTO t_brands (name, brand_logo, catalouge_id) VALUES (?,?,?)");
 $stmt->bind_param('sii', $name, $logoId, $catalogueId);
