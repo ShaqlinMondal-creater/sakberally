@@ -74,7 +74,7 @@
 
 <script>
   /* ======= CONFIG ======= */
-  const BASE_URL = 'https://sakberally.com/apis';
+  const BASE_URL = '<?php echo BASE_URL; ?>';
   const API_URL  = BASE_URL + '/products/fetch.php';
 
   /* ======= SIDEBAR ======= */

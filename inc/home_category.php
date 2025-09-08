@@ -36,7 +36,7 @@
 
       categories.forEach(cat => {
         const name = (cat.name || '').trim();
-        const img  = cat.category_image_path ? cat.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+        const img  = cat.category_image_path ? cat.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
         
         const a = document.createElement('a');
         a.href = `products?category=${encodeURIComponent(name)}`;

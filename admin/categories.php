@@ -91,7 +91,7 @@
   }
 
   /* ======= CONFIG ======= */
-  const BASE_URL = 'https://sakberally.com/apis';
+  const BASE_URL = '<?php echo BASE_URL; ?>';
   const FETCH_API_URL = BASE_URL + '/categories/fetch.php';  // Fetch Categories
   const CREATE_API_URL = BASE_URL + '/categories/create.php'; // Create Category
 
@@ -139,7 +139,7 @@
   //   const frag = document.createDocumentFragment();
   //   categories.forEach(c => {
   //     // Replace '../' with the base URL in category image path
-  //     const image = c.category_image_path ? c.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+  //     const image = c.category_image_path ? c.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
 
   //     const tr = document.createElement('tr');
   //     tr.innerHTML = `
@@ -187,7 +187,7 @@ function renderRows(categories) {
   const frag = document.createDocumentFragment();
   categories.forEach(c => {
     // Replace '../' with the base URL in category image path
-    const image = c.category_image_path ? c.category_image_path.replace('../', 'https://sakberally.com/apis/') : '';
+    const image = c.category_image_path ? c.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -271,7 +271,7 @@ function openUpdatePopup(id, name, sort_no, category_image_path) {
       formData.append('token', localStorage.getItem('user_token')); // Pass token
 
       try {
-        const response = await fetch('https://sakberally.com/apis/categories/update.php', {
+        const response = await fetch('<?php echo BASE_URL; ?>/categories/update.php', {
           method: 'POST',
           body: formData
         });

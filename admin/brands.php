@@ -97,7 +97,7 @@
   }
 
   /* ======= CONFIG ======= */
-  const BASE_URL = 'https://sakberally.com/apis';
+  const BASE_URL = '<?php echo BASE_URL; ?>';
   const API_URL  = BASE_URL + '/brands/fetch.php';
   const CREATE_API_URL = BASE_URL + '/brands/create.php'; // API for creating brand
 
@@ -148,8 +148,8 @@
       const tr = document.createElement('tr');
 
       // Replace '../' with the base URL in brand paths
-        const logo = b.brand_logo_path ? b.brand_logo_path.replace('../', 'https://sakberally.com/apis/') : '';
-        const catalog = b.brand_catalouge_path ? b.brand_catalouge_path.replace('../', 'https://sakberally.com/apis/') : '#';
+        const logo = b.brand_logo_path ? b.brand_logo_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
+        const catalog = b.brand_catalouge_path ? b.brand_catalouge_path.replace('../', '<?php echo BASE_URL; ?>/') : '#';
 
 
       tr.innerHTML = `
