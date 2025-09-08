@@ -56,12 +56,12 @@
           <!-- footer nav -->
           <nav class="relative mt-6">
           <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-gray-200">
-              <li><a href="index.php" class="hover:text-red-400">Home</a></li>
-              <li><a href="about.php" class="hover:text-red-400">About Us</a></li>
-              <li><a href="products.php" class="hover:text-red-400">Products</a></li>
-              <li><a href="brands.php" class="hover:text-red-400">Brands</a></li>
-              <li><a href="inquiry_form.php" class="hover:text-red-400">Inquiry Form</a></li>
-              <li><a href="contact.php" class="hover:text-red-400">Contact Us</a></li>
+              <li><a href="index" class="hover:text-red-400">Home</a></li>
+              <li><a href="about" class="hover:text-red-400">About Us</a></li>
+              <!-- <li><a href="products" class="hover:text-red-400">Products</a></li> -->
+              <li><a href="brands" class="hover:text-red-400">Brands</a></li>
+              <li><a href="inquiry_form" class="hover:text-red-400">Inquiry Form</a></li>
+              <li><a href="contact" class="hover:text-red-400">Contact Us</a></li>
           </ul>
           </nav>
 
