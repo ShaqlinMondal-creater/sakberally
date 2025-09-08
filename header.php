@@ -20,8 +20,8 @@
                 <div class="h-28 flex items-center justify-between">
                     <!-- Logo left -->
                     <a href="index" class="flex items-center gap-2">
-                        <img src="assets/images/3X7BIXE3MB-20180613-101023.jpg" alt="S Akberally &amp; Co." class="h-15 w-full">
-                        <span class="sr-only">S Akberally &amp; Co.</span>
+                        <img src="assets/images/3X7BIXE3MB-20180613-101023.jpg" alt="<?php echo APP_NAME; ?>" class="h-15 w-full">
+                        <span class="sr-only"><?php echo APP_NAME; ?></span>
                     </a>
 
                     <!-- RIGHT: Contact on top, Menu below -->
@@ -30,22 +30,22 @@
                         <!-- TOP ROW: Contact (desktop) -->
                         <!-- CONTACT ROW (top-right) -->
                         <div class="hidden md:flex items-center gap-5 mb-2 px-3 py-1 rounded-md">
-                            <a href="mailto:sakberally@gmail.com" class="flex items-center gap-2 hover:opacity-90 ">
+                            <a href="mailto:<?php echo EMAIL; ?>" class="flex items-center gap-2 hover:opacity-90 ">
                                 <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-600 ">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l8.25 5.5a2 2 0 002.5 0L22 7M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                     </svg>
                                 </span>
-                                <span class="whitespace-nowrap">sakberally@gmail.com</span>
+                                <span class="whitespace-nowrap"><?php echo EMAIL; ?></span>
                             </a>
 
-                            <a href="tel:+919831724830" class="flex items-center gap-2 hover:opacity-90">
+                            <a href="tel:+91<?php echo MOBILE; ?>" class="flex items-center gap-2 hover:opacity-90">
                                 <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-600 ">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.6a1 1 0 01.95.69l1.2 3.6a1 1 0 01-.45 1.17l-1.9 1.1a12.05 12.05 0 006.08 6.08l1.1-1.9a1 1 0 011.17-.45l3.6 1.2a1 1 0 01.69.95V19a2 2 0 01-2 2h-1C9.94 21 3 14.06 3 6V5z"></path>
                                     </svg>
                                 </span>
-                                <span class="whitespace-nowrap">9831724830</span>
+                                <span class="whitespace-nowrap"><?php echo MOBILE; ?></span>
                             </a>
 
                             <!-- Search toggle -->
@@ -123,8 +123,8 @@
             <!-- Mobile panel -->
             <div id="mobilePanel" class="hidden md:hidden border-t border-gray-200 bg-white">
                 <div class="px-4 py-3 space-y-1">
-                    <a data-link="index.php" class="block px-3 py-3 rounded nav-link" href="index.php">HOME</a>
-                    <a data-link="about.php" class="block px-3 py-3 rounded nav-link" href="about.php">ABOUT US</a>
+                    <a data-link="index.php" class="block px-3 py-3 rounded nav-link" href="index">HOME</a>
+                    <a data-link="about.php" class="block px-3 py-3 rounded nav-link" href="about">ABOUT US</a>
 
                     <!-- Products accordion (mobile) -->
                     <button id="mobileProductsBtn" class="w-full flex items-center justify-between px-3 py-3 rounded nav-link">
@@ -142,9 +142,9 @@
                         <a href="#" class="block py-2 text-sm">Garage Machinery</a>
                     </div>
 
-                    <a class="block px-3 py-3 rounded nav-link" href="#">BRANDS</a>
-                    <a class="block px-3 py-3 rounded nav-link" href="#">INQUIRY FORM</a>
-                    <a class="block px-3 py-3 rounded nav-link" href="#">CONTACT US</a>
+                    <a class="block px-3 py-3 rounded nav-link" href="brands">BRANDS</a>
+                    <a class="block px-3 py-3 rounded nav-link" href="inquiry_form">INQUIRY FORM</a>
+                    <a class="block px-3 py-3 rounded nav-link" href="contact_us">CONTACT US</a>
                 </div>
             </div>
         </nav>

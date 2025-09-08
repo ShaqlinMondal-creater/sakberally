@@ -12,7 +12,7 @@
     <!-- LEFT: Gallery -->
     <div>
       <div class="aspect-[4/3] w-full overflow-hidden rounded-xl border border-gray-200">
-        <img id="pd-main" src="" alt="Product Image" class="h-full w-full object-cover" />
+        <img id="pd-main" src="" alt="Product Image" class="h-full w-full object-contain" />
       </div>
 
       <!-- Thumbnails -->
@@ -28,19 +28,19 @@
 
       <!-- Price + CTA row -->
       <div class="mt-3 flex flex-wrap items-center gap-3">
-        <div id="product-price" class="text-2xl font-bold text-gray-900">
+        <!-- <div id="product-price" class="text-2xl font-bold text-gray-900">
           ₹0 <span class="text-sm font-normal text-gray-600">/ Piece</span>
-        </div>
+        </div> -->
 
-        <a href="#get-latest-price" class="inline-flex items-center rounded-lg border border-red-600 px-3 py-2 text-red-600 hover:bg-red-50">
+        <!-- <a href="#get-latest-price" class="inline-flex items-center rounded-lg border border-red-600 px-3 py-2 text-red-600 hover:bg-red-50">
           Get Latest Price
-        </a>
-        <a href="#" id="product-brochure" target="_blank" class="inline-flex items-center rounded-lg border px-3 py-2 text-gray-700 hover:bg-gray-50">
+        </a> -->
+        <!-- <a href="#" id="product-brochure" target="_blank" class="inline-flex items-center rounded-lg border px-3 py-2 text-gray-700 hover:bg-gray-50">
           <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l3.5-3.5M12 15l-3.5-3.5M4 19h16" />
           </svg>
           Product Brochure
-        </a>
+        </a> -->
       </div>
 
       <!-- Quick Specs -->
@@ -54,17 +54,17 @@
       </div>
 
       <!-- Action buttons -->
-      <div class="mt-8 flex flex-wrap gap-3">
+      <!-- <div class="mt-8 flex flex-wrap gap-3">
         <a href="#quote" class="inline-flex items-center justify-center rounded-xl bg-red-600 px-5 py-3 font-medium text-white hover:bg-red-700">
           Get Best Quote
         </a>
         <a href="#interested" class="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 font-medium text-gray-800 hover:bg-gray-50">
           Yes! I am interested
         </a>
-      </div>
+      </div> -->
 
       <!-- Small trust strip (optional) -->
-      <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+      <!-- <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-600">
         <div class="flex items-center gap-2">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7 12a5 5 0 1010 0 5 5 0 00-10 0z" />
@@ -77,7 +77,7 @@
           </svg>
           Secure Payments
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>
@@ -102,7 +102,7 @@
 
       // Set product info
       document.getElementById('product-name').textContent = product.name;
-      document.getElementById('product-price').textContent = `₹${product.price} ${product.unit}`;
+      // document.getElementById('product-price').textContent = `₹${product.price} ${product.unit}`;
       document.getElementById('product-description').innerHTML = product.description;
 
       // Set product image and gallery
@@ -115,8 +115,8 @@
       </button>`;
 
       // Set brochure link
-      const brochureLink = document.getElementById('product-brochure');
-      brochureLink.href = `assets/brochures/${product.id}.pdf`;  // Adjust with actual path if required
+      // const brochureLink = document.getElementById('product-brochure');
+      // brochureLink.href = `assets/brochures/${product.id}.pdf`;  // Adjust with actual path if required
 
       // Set specs dynamically
       const specsContainer = document.getElementById('product-specs');

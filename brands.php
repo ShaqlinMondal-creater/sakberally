@@ -20,12 +20,9 @@
         </div>
     </section>
 </main>
-
-<?php include("footer.php"); ?>
-
 <script>
   // API URL for fetching brands
-  const API_URL = 'https://sakberally.com/apis/brands/fetch.php';
+  const API_URL = '<?php echo BASE_URL; ?>/brands/fetch.php';
 
   // Function to fetch the brands from the API
   async function fetchBrands() {
@@ -73,8 +70,8 @@
     // Loop through the brands and add them to the grid
     brands.forEach(brand => {
       const brandName = brand.name;
-      const logoPath = brand.brand_logo_path ? `https://sakberally.com/apis/${brand.brand_logo_path.replace('../', '')}` : '';
-      const pdfPath = brand.brand_catalouge_path ? `https://sakberally.com/apis/${brand.brand_catalouge_path.replace('../', '')}` : null;
+      const logoPath = brand.brand_logo_path ? `<?php echo BASE_URL; ?>/${brand.brand_logo_path.replace('../', '')}` : '';
+      const pdfPath = brand.brand_catalouge_path ? `<?php echo BASE_URL; ?>/${brand.brand_catalouge_path.replace('../', '')}` : null;
 
       const brandHTML = `
         <div class="group block p-2 sm:p-3 md:p-4 rounded transition-transform duration-200
@@ -98,3 +95,6 @@
   // Fetch the brands on page load
   fetchBrands();
 </script>
+<?php include("footer.php"); ?>
+
+

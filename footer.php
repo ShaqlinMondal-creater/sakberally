@@ -19,7 +19,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zm0 0c-4 0-7 3-7 7 3 1 7 1 7 1s4 0 7-1c0-4-3-7-7-7z"></path>
               </svg>
               <p class="text-gray-100/90 leading-6">
-                  137, B.R.B Basu Road (Canning Street) Kolkata 7000001, West Bengal, India.
+                  <?php echo ADDRESS; ?>
               </p>
               </div>
           </div>
@@ -34,7 +34,7 @@
                   </svg>
                   <div>
                   <div class="text-gray-200">Phone:</div>
-                  <a href="tel:+919831724830" class="text-white hover:text-red-400 font-medium">9831724830</a>
+                  <a href="tel:+91<?php echo MOBILE; ?>" class="text-white hover:text-red-400 font-medium">+91 <?php echo MOBILE; ?></a>
                   </div>
               </div>
               <div class="flex items-center gap-3">
@@ -43,7 +43,7 @@
                   </svg>
                   <div>
                   <div class="text-gray-200">Email:</div>
-                  <a href="mailto:sakberally@gmail.com" class="text-white hover:text-red-400 font-medium">sakberally@gmail.com</a>
+                  <a href="mailto:<?php echo EMAIL; ?>" class="text-white hover:text-red-400 font-medium"><?php echo EMAIL; ?></a>
                   </div>
               </div>
               </div>
@@ -70,16 +70,16 @@
 
           <!-- bottom bar: copyright + Designed & Developed by image -->
           <div class="mt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-gray-200">
-          <div class="text-center md:text-left">
-              <!-- use &copy; to avoid odd encoding like Â© -->
-              © 2018 S Akberally &amp; Co. Ltd. All rights reserved.
-          </div>
-          <div class="flex items-center gap-2">
-              <span>Designed &amp; Developed by&nbsp;–</span>
-              <a href="#" aria-label="Designed by">
-              <img src="assets/images/aslog.png" alt="Designer Logo" class="h-6 w-auto">
-              </a>
-          </div>
+            <div class="text-center md:text-left">
+                <!-- use &copy; to avoid odd encoding like Â© -->
+                © 2025 <?php echo APP_NAME; ?> Ltd. All rights reserved.
+            </div>
+            <!-- <div class="flex items-center gap-2">
+                <span>Designed &amp; Developed by&nbsp;–</span>
+                <a href="#" aria-label="Designed by">
+                <img src="assets/images/aslog.png" alt="Designer Logo" class="h-6 w-auto">
+                </a>
+            </div> -->
           </div>
       </div>
   </footer>
