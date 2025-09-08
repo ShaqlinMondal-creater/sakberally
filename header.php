@@ -66,7 +66,7 @@
                                     <label for="q" class="sr-only">Search</label>
                                     <input id="q" name="q" type="text" placeholder="Search products…" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
                                 </form>
-                                <div id="searchResults" class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 hidden z-50"></div>
+                                <div id="searchResults" class="absolute right-auto bg-white border border-gray-200 rounded shadow-lg mt-1 z-50"></div>
                             </div>
                         </div>
                         
@@ -154,56 +154,56 @@
         </nav>
     </header>    
 
-    <script>
-const BASE_URL = "<?php echo BASE_URL; ?>"; // Your base URL
-const searchInput = document.getElementById('q');
-const searchResults = document.getElementById('searchResults');
-let searchTimeout = null;
+<script>
+    const BASE_URL = "<?php echo BASE_URL; ?>"; // Your base URL
+    const searchInput = document.getElementById('q');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout = null;
 
-searchInput.addEventListener('input', () => {
-    const query = searchInput.value.trim();
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
 
-    // Hide results if <3 characters
-    if (query.length < 3) {
-        searchResults.innerHTML = '';
-        searchResults.classList.add('hidden');
-        return;
-    }
+        // Hide results if <3 characters
+        if (query.length < 3) {
+            searchResults.innerHTML = '';
+            searchResults.classList.add('hidden');
+            return;
+        }
 
-    // Debounce to avoid too many requests
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        fetch(`${BASE_URL}/products/fetch.php`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: query })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success && data.data.products.length > 0) {
-                searchResults.innerHTML = data.data.products.map(product => `
-                    <a href="product_detail.php?id=${product.id}" class="block px-4 py-2 hover:bg-gray-100">
-                        ${product.name.length > 40 ? product.name.slice(0, 40) + '...' : product.name}
-                    </a>
-                `).join('');
+        // Debounce to avoid too many requests
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            fetch(`${BASE_URL}/products/fetch.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: query })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data.products.length > 0) {
+                    searchResults.innerHTML = data.data.products.map(product => `
+                        <a href="product_detail.php?id=${product.id}" class="block px-4 py-2 hover:bg-gray-100">
+                            ${product.name.length > 40 ? product.name.slice(0, 40) + '...' : product.name}
+                        </a>
+                    `).join('');
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.innerHTML = '<div class="px-4 py-2 text-gray-500">No products found</div>';
+                    searchResults.classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                searchResults.innerHTML = '<div class="px-4 py-2 text-red-500">Error fetching results</div>';
                 searchResults.classList.remove('hidden');
-            } else {
-                searchResults.innerHTML = '<div class="px-4 py-2 text-gray-500">No products found</div>';
-                searchResults.classList.remove('hidden');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            searchResults.innerHTML = '<div class="px-4 py-2 text-red-500">Error fetching results</div>';
-            searchResults.classList.remove('hidden');
-        });
-    }, 300); // 300ms debounce
-});
+            });
+        }, 300); // 300ms debounce
+    });
 
-// Hide dropdown when clicking outside
-document.addEventListener('click', (e) => {
-    if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
-        searchResults.classList.add('hidden');
-    }
-});
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
 </script>
