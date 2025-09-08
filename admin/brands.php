@@ -33,6 +33,7 @@
       <table class="min-w-full text-sm">
         <thead class="bg-gray-50">
           <tr class="text-left text-gray-600">
+            <th class="px-4 py-3 font-medium">ID</th>
             <th class="px-4 py-3 font-medium">Brand</th>
             <th class="px-4 py-3 font-medium">Logo</th>
             <th class="px-4 py-3 font-medium">Catalogue</th>
@@ -152,6 +153,7 @@
 
 
       tr.innerHTML = `
+        <td class="px-4 py-3">${b.id}</td>
         <td class="px-4 py-3">${escapeHtml(b.name || '')}</td>
         <td class="px-4 py-3">
           <img src="${logo}" alt="${b.name}" class="w-16 h-16 object-contain rounded bg-gray-100">
