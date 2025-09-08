@@ -155,7 +155,20 @@
           </button>
         </div>
       </header>
+      <script>
+          // Immediately execute to check authentication
+          (function() {
+              // Get stored values from localStorage
+              const token = localStorage.getItem('user_token');
+              const role  = localStorage.getItem('user_role');
 
+              // Check if token exists and role is admin
+              if (!token || role !== 'admin') {
+                  // Redirect to login page if not authorized
+                  window.location.href = 'login.php'; // change to your actual login page
+              }
+          })();
+      </script>
       <script>
         function logout() {
           // Clear token and role from localStorage
@@ -163,6 +176,6 @@
           localStorage.removeItem("user_role");
 
           // Redirect to login page
-          window.location.href = "login.php"; // Change this to your actual login page path
+          window.location.href = "../login.php"; // Change this to your actual login page path
         }
       </script>
