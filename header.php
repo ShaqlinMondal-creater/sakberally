@@ -95,12 +95,15 @@
                                     <!-- Keep open while hovering parent OR dropdown -->
                                     <div class="absolute left-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg
                                         opacity-0 invisible group-hover:opacity-100 group-hover:visible  transition duration-200 ease-out z-20 py-2">
-                                        <a href="products?category=Power Tools" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Power Tools</a>
-                                        <a href="products?category=Workshop Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Workshop Machinery</a>
                                         <a href="products?category=Wood Working" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Wood Working</a>
-                                        <a href="products?category=Steel Metal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Steel Metal</a>
-                                        <a href="products?category=Lifting Tackles" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Lifting Tackles</a>
-                                        <a href="products?category=Garage Machinery" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Garage Machinery</a>
+                                        <a href="products?category=Pressure Washer Pump" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Pressure Washer Pump</a>
+                                        <a href="products?category=Construction Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Construction Machine</a>
+                                        <a href="products?category=CUT-100 Air Plasma Cutting Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">CUT-100 Air Plasma Cutting Machine</a>
+                                        <a href="products?category=Power Tools" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Power Tools</a>
+                                        <a href="products?category=Sheet Metal Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sheet Metal Machine</a>
+                                        <a href="products?category=Single Phase Floor Polishing Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Single Phase Floor Polishing Machine</a>
+                                        <a href="products?category=Air Compressor" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Air Compressor</a>
+                                        <a href="products?category=Woodworking Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Woodworking Machine</a>
                                     </div>
                                 </div>
 
@@ -134,12 +137,15 @@
                         </svg>
                     </button>
                     <div id="mobileProductsList" class="hidden ml-3 border-l border-gray-200 pl-3 space-y-1 pb-2">
-                        <a href="#" class="block py-2 text-sm">Power Tools</a>
-                        <a href="#" class="block py-2 text-sm">Workshop Machinery</a>
-                        <a href="#" class="block py-2 text-sm">Wood Working</a>
-                        <a href="#" class="block py-2 text-sm">Steel Metal</a>
-                        <a href="#" class="block py-2 text-sm">Lifting Tackles</a>
-                        <a href="#" class="block py-2 text-sm">Garage Machinery</a>
+                        <a href="products?category=Wood Working" class="block py-2 text-sm">Wood Working</a>
+                        <a href="products?category=Pressure Washer Pump" class="block py-2 text-sm">Pressure Washer Pump</a>
+                        <a href="products?category=Construction Machine" class="block py-2 text-sm">Construction Machine</a>
+                        <a href="products?category=CUT-100 Air Plasma Cutting Machine" class="block py-2 text-sm">CUT-100 Air Plasma Cutting Machine</a>
+                        <a href="products?category=Power Tools" class="block py-2 text-sm">Power Tools</a>
+                        <a href="products?category=Sheet Metal Machine" class="block py-2 text-sm">Sheet Metal Machine</a>
+                        <a href="products?category=Single Phase Floor Polishing Machine" class="block py-2 text-sm">Single Phase Floor Polishing Machine</a>
+                        <a href="products?category=Air Compressor" class="block py-2 text-sm">Air Compressor</a>
+                        <a href="products?category=Woodworking Machine" class="block py-2 text-sm">Woodworking Machine</a>
                     </div>
 
                     <a class="block px-3 py-3 rounded nav-link" href="brands">BRANDS</a>
