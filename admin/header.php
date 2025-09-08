@@ -165,7 +165,7 @@
               // Check if token exists and role is admin
               if (!token || role !== 'admin') {
                   // Redirect to login page if not authorized
-                  window.location.href = 'login.php'; // change to your actual login page
+                  window.location.href = '../login.php'; // change to your actual login page
               }
           })();
       </script>
