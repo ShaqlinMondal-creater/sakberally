@@ -156,12 +156,12 @@
 
 <script>
      // Your base URL
-    const searchInput = document.getElementById('q');
+    const searchInputs = document.getElementById('q');
     const searchResults = document.getElementById('searchResults');
     let searchTimeout = null;
 
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
+    searchInputs.addEventListener('input', () => {
+        const query = searchInputs.value.trim();
 
         // Hide results if <3 characters
         if (query.length < 3) {
@@ -202,7 +202,7 @@
 
     // Hide dropdown when clicking outside
     document.addEventListener('click', (e) => {
-        if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
+        if (!searchResults.contains(e.target) && !searchInputs.contains(e.target)) {
             searchResults.classList.add('hidden');
         }
     });
