@@ -22,7 +22,6 @@
                       <option value="Single Phase Floor Polishing Machine" >Single Phase Floor Polishing Machine</option>
                       <option value="Air Compressor" >Air Compressor</option>
                       <option value="Woodworking Machine" >Woodworking Machine</option>
-                      <!-- add more categories as needed -->
                   </select>
               </div>
               <hr class="w-full mb-7 border border-gray-300">

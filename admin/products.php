@@ -15,10 +15,15 @@
                class="col-span-2 sm:col-span-2 px-3 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand/30">
         <select id="filterCategory" class="px-3 py-2 rounded-lg bg-gray-100">
           <option value="">All Categories</option>
-          <option>Wood Working</option>
-          <option>Lathe</option>
-          <option>Welding</option>
-          <option>Drilling</option>
+          <option value="Wood Working" >Wood Working</option>
+          <option value="Pressure Washer Pump" >Pressure Washer Pump</option>
+          <option value="Construction Machine" >Construction Machine</option>
+          <option value="CUT-100 Air Plasma Cutting Machine" >CUT-100 Air Plasma Cutting Machine</option>
+          <option value="Power Tools" >Power Tools</option>
+          <option value="Sheet Metal Machine" >Sheet Metal Machine</option>
+          <option value="Single Phase Floor Polishing Machine" >Single Phase Floor Polishing Machine</option>
+          <option value="Air Compressor" >Air Compressor</option>
+          <option value="Woodworking Machine" >Woodworking Machine</option>
         </select>
         <select id="limit" class="px-3 py-2 rounded-lg bg-gray-100">
           <option value="10">10 / page</option>
