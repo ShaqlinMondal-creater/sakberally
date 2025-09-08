@@ -65,8 +65,8 @@
   const NO_PARAM_MODE = urlCategory === '';
   const MAX_CAP_NO_PARAM = 500;              // cap when no params
   const FIRST_PAGE_SIZE_NO_PARAM = 24;       // initial
-  const NEXT_PAGE_SIZE_NO_PARAM = 100;       // subsequent
-  const PAGE_SIZE_CATEGORY = 100;            // when category param present
+  const NEXT_PAGE_SIZE_NO_PARAM = 500;  //100     // subsequent
+  const PAGE_SIZE_CATEGORY = 500;       //100     // when category param present
 
   // Current filters
   let currentName = '';
