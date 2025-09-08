@@ -91,9 +91,9 @@
   }
 
   /* ======= CONFIG ======= */
-  const BASE_URL = '<?php echo BASE_URL; ?>';
-  const FETCH_API_URL = BASE_URL + '/categories/fetch.php';  // Fetch Categories
-  const CREATE_API_URL = BASE_URL + '/categories/create.php'; // Create Category
+  const EBASE_URL = '<?php echo BASE_URL; ?>';
+  const FETCH_API_URL = EBASE_URL + '/categories/fetch.php';  // Fetch Categories
+  const CREATE_API_URL = EBASE_URL + '/categories/create.php'; // Create Category
 
   /* ======= STATE ======= */
   const state = {

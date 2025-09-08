@@ -62,8 +62,8 @@
 <script>
   (function(){
     // Set your base URL once
-    const BASE_URL = "<?php echo BASE_URL; ?>";       // e.g. 'https://yourdomain.com'
-    const API = `${BASE_URL}/brands/fetch.php`;
+    const ABASE_URL = "<?php echo BASE_URL; ?>";       // e.g. 'https://yourdomain.com'
+    const API = `${ABASE_URL}/brands/fetch.php`;
 
     const viewport = document.getElementById('brandViewport');
     const track = document.getElementById('brandTrack');
@@ -78,7 +78,7 @@
     function resolvePath(p){
       if (!p) return null;
       if (/^https?:\/\//i.test(p)) return p;
-      return `${BASE_URL}/${p.replace(/^(\.\.\/)+/, '')}`;
+      return `${ABASE_URL}/${p.replace(/^(\.\.\/)+/, '')}`;
     }
 
     // Build one slide

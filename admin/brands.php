@@ -97,9 +97,9 @@
   }
 
   /* ======= CONFIG ======= */
-  const BASE_URL = '<?php echo BASE_URL; ?>';
-  const API_URL  = BASE_URL + '/brands/fetch.php';
-  const CREATE_API_URL = BASE_URL + '/brands/create.php'; // API for creating brand
+  const FBASE_URL = '<?php echo BASE_URL; ?>';
+  const API_URL  = FBASE_URL + '/brands/fetch.php';
+  const CREATE_API_URL = FBASE_URL + '/brands/create.php'; // API for creating brand
 
   /* ======= STATE ======= */
   const state = {
