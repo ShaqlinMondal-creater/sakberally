@@ -13,9 +13,15 @@
                   <input id="searchInput" type="text" placeholder="Search product name…" class="w-60 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                   <select id="categorySelect" class="w-40 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                       <option value="">All Categories</option>
-                      <option value="Wood Working Machine">Wood Working Machine</option>
-                      <option value="Pressure Washer Pump">Pressure Washer Pump</option>
-                      <option value="Construction Machine">Construction Machine</option>
+                      <option value="Wood Working" >Wood Working</option>
+                      <option value="Pressure Washer Pump" >Pressure Washer Pump</option>
+                      <option value="Construction Machine" >Construction Machine</option>
+                      <option value="CUT-100 Air Plasma Cutting Machine" >CUT-100 Air Plasma Cutting Machine</option>
+                      <option value="Power Tools" >Power Tools</option>
+                      <option value="Sheet Metal Machine" >Sheet Metal Machine</option>
+                      <option value="Single Phase Floor Polishing Machine" >Single Phase Floor Polishing Machine</option>
+                      <option value="Air Compressor" >Air Compressor</option>
+                      <option value="Woodworking Machine" >Woodworking Machine</option>
                       <!-- add more categories as needed -->
                   </select>
               </div>
