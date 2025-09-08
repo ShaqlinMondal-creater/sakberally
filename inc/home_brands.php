@@ -72,7 +72,7 @@
 
     let items = [];        // DOM nodes for slides
     let start = 0;         // index of first visible item
-    let visible = 4;       // how many to show at once (desktop default)
+    let visible = 6;       // how many to show at once (desktop default)
     let gapPx = 0;         // computed from CSS gap
 
     function resolvePath(p){
