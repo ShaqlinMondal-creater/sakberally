@@ -39,8 +39,7 @@
     </main>
 <script>
         // ====== CONFIG ======
-        const DBASE_URL = "<?php echo BASE_URL; ?>"; // <-- replace this
-         const API_URL = `${DBASE_URL}/products/fetch.php`;
+         const API_URL = `<?php echo BASE_URL; ?>/products/fetch.php`;
 
   // URL params
   const params = new URLSearchParams(location.search);

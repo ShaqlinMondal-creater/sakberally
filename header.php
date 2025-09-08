@@ -155,7 +155,7 @@
     </header>    
 
 <script>
-    const SBASE_URL = "<?php echo BASE_URL; ?>"; // Your base URL
+     // Your base URL
     const searchInput = document.getElementById('q');
     const searchResults = document.getElementById('searchResults');
     let searchTimeout = null;
@@ -173,7 +173,7 @@
         // Debounce to avoid too many requests
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            fetch(`${SBASE_URL}/products/fetch.php`, {
+            fetch(`<?php echo BASE_URL; ?>/products/fetch.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: query })

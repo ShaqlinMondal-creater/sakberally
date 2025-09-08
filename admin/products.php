@@ -74,8 +74,8 @@
 
 <script>
   /* ======= CONFIG ======= */
-  const PBASE_URL = '<?php echo BASE_URL; ?>';
-  const API_URL  = PBASE_URL + '/products/fetch.php';
+  
+  const API_URL  = '<?php echo BASE_URL; ?>/products/fetch.php';
 
   /* ======= SIDEBAR ======= */
   function openSidebar() { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('overlay').classList.remove('hidden'); }
