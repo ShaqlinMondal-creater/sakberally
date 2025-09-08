@@ -150,5 +150,19 @@
             </svg>
           </button>
           <div class="w-9 h-9 rounded-full bg-brand text-white grid place-items-center font-semibold">SA</div>
+          <button onclick="logout()" class="p-2 rounded hover:bg-gray-100" aria-label="logout">
+            Logout
+          </button>
         </div>
       </header>
+
+      <script>
+        function logout() {
+          // Clear token and role from localStorage
+          localStorage.removeItem("user_token");
+          localStorage.removeItem("user_role");
+
+          // Redirect to login page
+          window.location.href = "login.php"; // Change this to your actual login page path
+        }
+      </script>
