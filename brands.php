@@ -14,7 +14,7 @@
 
             <!-- Grid -->
             <div id="brandsGrid" class="mt-8 md:mt-10 grid gap-x-10 gap-y-10
-                            grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 place-items-center">
+                            grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-4 place-items-center">
                 <!-- Brand items will be injected here -->
             </div>
         </div>
