@@ -1,6 +1,6 @@
 <?php
 // fetch_uploads.php
-require __DIR__ . 'configs/db_connect.php';
+require '../configs/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
