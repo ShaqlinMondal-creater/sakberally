@@ -83,11 +83,26 @@
     return num === 0 ? '—' : `₹ ${num.toLocaleString('en-IN')}`;
   }
 
+  // function imageFrom(item) {
+  //   if (item.upload_path) return item.upload_path;
+  //   if (item.upd_link) return item.upd_link;
+  //   return 'assets/images/placeholder-product.png';
+  // }
   function imageFrom(item) {
-    if (item.upload_path) return item.upload_path;
-    if (item.upd_link) return item.upd_link;
-    return 'assets/images/placeholder-product.png';
+    const BASE = '<?php echo BASE_URL; ?>/';
+    const src =
+      (item && (item.upload_path || item.file_path || item.upd_link)) || '';
+
+    if (!src) return 'assets/images/placeholder-product.png';
+
+    // If already absolute (http/https) or data URI, return as-is
+    if (/^(https?:)?\/\//i.test(src) || /^data:/i.test(src)) return src;
+
+    // Clean leading ../ or ./ and join with BASE safely
+    const cleaned = src.replace(/^(\.\.\/)+|^\.\/+/, '');
+    return BASE.replace(/\/+$/, '') + '/' + cleaned.replace(/^\/+/, '');
   }
+
 
   function truncateText(text, maxLength) {
     if (text.length > maxLength) {
