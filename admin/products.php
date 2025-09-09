@@ -86,7 +86,7 @@
   const state = {
     name: '',          // search
     category: '',      // filter
-    limit: 100,
+    limit: 500,
     offset: 0,
     count: 0,
     loading: false
