@@ -114,8 +114,8 @@
       mainImage.src = normalizePath(product.upload_path);
       
       const thumbsContainer = document.getElementById('thumbs-container');
-      thumbsContainer.innerHTML = `<button class="thumb shrink-0 w-24 h-24 overflow-hidden rounded-lg border border-gray-200" data-src="${product.upd_link}">
-        <img src="${product.upload_path}" class="h-full w-full object-contain" />
+      thumbsContainer.innerHTML = `<button class="thumb shrink-0 w-24 h-24 overflow-hidden rounded-lg border border-gray-200" data-src="${normalizePath(product.upload_path)}">
+        <img src="${normalizePath(product.upload_path)}" class="h-full w-full object-contain" />
       </button>`;
 
       // Set brochure link
