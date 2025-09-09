@@ -131,7 +131,7 @@
 
       // const image = imgOr(p.upload_path, p.upd_link);
       const price = currency(p.price);
-      const image = p.upload_path ? p.upload_path.replace('../', 'https://sakberally.com/apis/') : '';
+      const image = p.upload_path ? p.upload_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
 // <img src="${image}" onerror="this.src='https://via.placeholder.com/56x56?text=%20';" alt="" class="w-14 h-14 object-cover rounded bg-gray-100">
 
       tr.innerHTML = `
