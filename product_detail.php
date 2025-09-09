@@ -105,13 +105,17 @@
       // document.getElementById('product-price').textContent = `₹${product.price} ${product.unit}`;
       document.getElementById('product-description').innerHTML = product.description;
 
+      function normalizePath(path) {
+        return path.replace("../", "https://sakberally.com/apis/");
+      }
+
       // Set product image and gallery
       const mainImage = document.getElementById('pd-main');
-      mainImage.src = product.upd_link;
+      mainImage.src = normalizePath(product.upload_path);
       
       const thumbsContainer = document.getElementById('thumbs-container');
       thumbsContainer.innerHTML = `<button class="thumb shrink-0 w-24 h-24 overflow-hidden rounded-lg border border-gray-200" data-src="${product.upd_link}">
-        <img src="${product.upd_link}" class="h-full w-full object-contain" />
+        <img src="${product.upload_path}" class="h-full w-full object-contain" />
       </button>`;
 
       // Set brochure link
