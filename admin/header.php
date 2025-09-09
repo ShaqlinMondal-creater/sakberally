@@ -30,7 +30,7 @@
     }
   </style>
 </head>
-<?php include('../api_config.php'); ?>
+<?php include('api_config.php'); ?>
 <body class="min-h-screen bg-gray-50 text-gray-900">
 
   <!-- Layout -->
