@@ -51,7 +51,7 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // Run when Chart is loaded
-    window.addEventListener('load', initCharts);
+    // window.addEventListener('load', initCharts);
   </script>
 
 <script>
