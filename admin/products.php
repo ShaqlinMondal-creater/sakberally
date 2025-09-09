@@ -131,13 +131,14 @@
 
       // const image = imgOr(p.upload_path, p.upd_link);
       const price = currency(p.price);
-      const image = p.upload_path ? p.upload_path.replace('../', '../apis/') : '';
-      // <img src="${image}" onerror="this.src='https://via.placeholder.com/56x56?text=%20';" alt="" class="w-14 h-14 object-cover rounded bg-gray-100">
+      const image = p.upload_path ? p.upload_path.replace('../', 'https://sakberally.com/apis/') : '';
+// <img src="${image}" onerror="this.src='https://via.placeholder.com/56x56?text=%20';" alt="" class="w-14 h-14 object-cover rounded bg-gray-100">
 
       tr.innerHTML = `
         <td class="px-4 py-3">
           <div class="flex items-center gap-3">
-            <img src="${image}" alt="" class="w-14 h-14 object-cover rounded bg-gray-100">
+            <img src="${image}" alt=""
+                 class="w-14 h-14 object-cover rounded bg-gray-100">
             <div>
               <div class="font-medium">${escapeHtml(p.name || '')}</div>
               <div class="text-gray-500 text-xs">${(p.unit || '').toString()}</div>
