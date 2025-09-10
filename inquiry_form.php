@@ -92,7 +92,7 @@
     // Gather fields
     const first = (document.getElementById('first_names').value || '').trim();
     const last  = (document.getElementById('last_names').value || '').trim();
-    const email = (document.getElementById('emais').value || '').trim();
+    const email = (document.getElementById('emails').value || '').trim();
     const phone = (document.getElementById('phones').value || '').trim();
     const msg   = (document.getElementById('messages').value || '').trim();
     const subject = 'inquiry'; // default as required
