@@ -24,7 +24,7 @@ function bind_params_by_ref(mysqli_stmt $stmt, string $types, array $params): vo
 
 $sql = "
   SELECT 
-    i.id, i.name, i.mobile, i.email, i.subject, i.messege, i.upload_id,
+    i.id, i.name, i.mobile, i.email, i.subject, i.messege, i.upload_id, i.create at,
     u.file_path AS upload_path
   FROM t_inquiry_contact i
   LEFT JOIN t_uploads u ON u.id = i.upload_id
@@ -73,7 +73,8 @@ while ($r = $res->fetch_assoc()) {
         'subject'    => $r['subject'],
         'messege'    => $r['messege'],
         'upload_id'  => $r['upload_id'] ? (int)$r['upload_id'] : null,
-        'upload_path'=> $r['upload_path'] ?? null
+        'upload_path'=> $r['upload_path'] ?? null,
+        'date'       => $r['create at'] ?? null
     ];
 }
 $stmt->close();
