@@ -1,89 +1,89 @@
 <?php include("header.php") ?>
 
-<!-- Content -->
-<main class="p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- Content -->
+    <main class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-  <!-- Filters -->
-  <section class="bg-white rounded-xl shadow p-4">
-    <div class="flex flex-col md:flex-row gap-3 md:items-center">
-      <div class="flex gap-2">
-        <button id="btnAdd" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700" onclick="openAddBrandPopup()">Add Brand</button>
-      </div>
+      <!-- Filters -->
+      <section class="bg-white rounded-xl shadow p-4">
+        <div class="flex flex-col md:flex-row gap-3 md:items-center">
+          <div class="flex gap-2">
+            <button id="btnAdd" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700" onclick="openAddBrandPopup()">Add Brand</button>
+          </div>
 
-      <div class="md:ml-auto grid grid-cols-2 sm:grid-cols-4 gap-2 w-full md:w-auto">
-        <input id="searchName" type="text" placeholder="Search by name…" class="col-span-2 sm:col-span-2 px-3 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand/30">
-        <select id="limit" class="px-3 py-2 rounded-lg bg-gray-100">
-          <option value="10">10 / page</option>
-          <option value="20">20 / page</option>
-          <option value="50">50 / page</option>
-          <option value="100">100 / page</option>
-        </select>
+          <div class="md:ml-auto grid grid-cols-2 sm:grid-cols-4 gap-2 w-full md:w-auto">
+            <input id="searchName" type="text" placeholder="Search by name…" class="col-span-2 sm:col-span-2 px-3 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand/30">
+            <select id="limit" class="px-3 py-2 rounded-lg bg-gray-100">
+              <option value="10">10 / page</option>
+              <option value="20">20 / page</option>
+              <option value="50">50 / page</option>
+              <option value="100">100 / page</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Brands Table -->
+      <section class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="px-4 py-3 border-b flex items-center justify-between text-sm">
+          <div id="meta">Showing 0–0 of 0</div>
+          <div id="status" class="text-gray-500"></div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr class="text-left text-gray-600">
+                <th class="px-4 py-3 font-medium">ID</th>
+                <th class="px-4 py-3 font-medium">Brand</th>
+                <th class="px-4 py-3 font-medium">Logo</th>
+                <th class="px-4 py-3 font-medium">Catalogue</th>
+                <th class="px-4 py-3 font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyBrands" class="divide-y">
+              <!-- rows injected here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer / pagination -->
+        <div class="p-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+          <div class="text-sm text-gray-600" id="serverMessage"></div>
+          <nav class="flex items-center gap-1">
+            <button id="btnPrev" class="px-3 py-2 rounded-lg hover:bg-gray-100">Prev</button>
+            <button id="btnNext" class="px-3 py-2 rounded-lg hover:bg-gray-100">Next</button>
+          </nav>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Add Brand Popup (Hidden by default) -->
+    <div id="addBrandPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden justify-center items-center">
+      <div class="bg-white p-6 rounded-lg w-1/3">
+        <h3 class="text-xl font-semibold mb-4">Add New Brand</h3>
+        <form id="addBrandForm" enctype="multipart/form-data">
+          <div class="mb-4">
+            <label for="brandName" class="block text-sm font-medium text-gray-700">Brand Name</label>
+            <input type="text" id="brandName" name="name" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
+          </div>
+          <div class="mb-4">
+            <label for="brandLogo" class="block text-sm font-medium text-gray-700">Brand Logo</label>
+            <input type="file" id="brandLogo" name="brand_logo" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
+          </div>
+          <div class="mb-4">
+            <label for="brandCatalogue" class="block text-sm font-medium text-gray-700">Brand Catalogue</label>
+            <input type="file" id="brandCatalogue" name="brand_catalogue" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" />
+          </div>
+          <div class="flex justify-end gap-3">
+            <button type="button" class="px-4 py-2 rounded-lg bg-gray-300 text-white" onclick="closeAddBrandPopup()">Cancel</button>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700">Save Brand</button>
+          </div>
+        </form>
       </div>
     </div>
-  </section>
 
-  <!-- Brands Table -->
-  <section class="bg-white rounded-xl shadow overflow-hidden">
-    <div class="px-4 py-3 border-b flex items-center justify-between text-sm">
-      <div id="meta">Showing 0–0 of 0</div>
-      <div id="status" class="text-gray-500"></div>
-    </div>
-
-    <div class="overflow-x-auto">
-      <table class="min-w-full text-sm">
-        <thead class="bg-gray-50">
-          <tr class="text-left text-gray-600">
-            <th class="px-4 py-3 font-medium">ID</th>
-            <th class="px-4 py-3 font-medium">Brand</th>
-            <th class="px-4 py-3 font-medium">Logo</th>
-            <th class="px-4 py-3 font-medium">Catalogue</th>
-            <th class="px-4 py-3 font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyBrands" class="divide-y">
-          <!-- rows injected here -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Footer / pagination -->
-    <div class="p-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
-      <div class="text-sm text-gray-600" id="serverMessage"></div>
-      <nav class="flex items-center gap-1">
-        <button id="btnPrev" class="px-3 py-2 rounded-lg hover:bg-gray-100">Prev</button>
-        <button id="btnNext" class="px-3 py-2 rounded-lg hover:bg-gray-100">Next</button>
-      </nav>
-    </div>
-  </section>
-
-</main>
-
-<!-- Add Brand Popup (Hidden by default) -->
-<div id="addBrandPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden justify-center items-center">
-  <div class="bg-white p-6 rounded-lg w-1/3">
-    <h3 class="text-xl font-semibold mb-4">Add New Brand</h3>
-    <form id="addBrandForm" enctype="multipart/form-data">
-      <div class="mb-4">
-        <label for="brandName" class="block text-sm font-medium text-gray-700">Brand Name</label>
-        <input type="text" id="brandName" name="name" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
-      </div>
-      <div class="mb-4">
-        <label for="brandLogo" class="block text-sm font-medium text-gray-700">Brand Logo</label>
-        <input type="file" id="brandLogo" name="brand_logo" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" required />
-      </div>
-      <div class="mb-4">
-        <label for="brandCatalogue" class="block text-sm font-medium text-gray-700">Brand Catalogue</label>
-        <input type="file" id="brandCatalogue" name="brand_catalogue" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" />
-      </div>
-      <div class="flex justify-end gap-3">
-        <button type="button" class="px-4 py-2 rounded-lg bg-gray-300 text-white" onclick="closeAddBrandPopup()">Cancel</button>
-        <button type="submit" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700">Save Brand</button>
-      </div>
-    </form>
   </div>
-</div>
-
-</div>
 </div>
 
 <script>
@@ -310,6 +310,5 @@
   })();
 </script>
 
-</body>
-</html>
+<?php include("footer.php"); ?>
 

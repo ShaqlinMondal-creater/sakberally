@@ -182,18 +182,6 @@
   </div>
 
   <script>
-    // Sidebar controls
-    function openSidebar() {
-      document.getElementById('sidebar').style.transform = 'translateX(0)';
-      document.getElementById('overlay').classList.remove('hidden');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').style.transform = 'translateX(-100%)';
-      document.getElementById('overlay').classList.add('hidden');
-    }
-    // Init year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
     // Charts
     function initCharts() {
       const salesCtx = document.getElementById('salesChart');
@@ -241,5 +229,4 @@
     // Run when Chart is loaded
     window.addEventListener('load', initCharts);
   </script>
-</body>
-</html>
+<?php include("footer.php"); ?>

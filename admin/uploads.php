@@ -3,26 +3,26 @@
       <!-- Content -->
         <!-- Filters (optional) -->
         <div class="p-4 sm:p-6 lg:p-8">
-        <form id="filterForm" class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
-            <select id="purpose" class="border rounded-lg p-2">
-            <option value="">All purposes</option>
-            <option value="brands">brands</option>
-            <option value="category">category</option>
-            <option value="products">products</option>
-            <option value="others">others</option>
-            <option value="all">all</option>
-            </select>
-            <select id="extension" class="border rounded-lg p-2">
-            <option value="">All types</option>
-            <option value="pdf">pdf</option>
-            <option value="jpg">jpg</option>
-            <option value="jpeg">jpeg</option>
-            <option value="png">png</option>
-            <option value="webp">webp</option>
-            </select>
-            <input id="nameSearch" class="border rounded-lg p-2" placeholder="Search by file name…" />
-            <button class="bg-gray-900 text-white rounded-lg px-4 py-2">Apply</button>
-        </form>
+          <form id="filterForm" class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
+              <select id="purpose" class="border rounded-lg p-2">
+              <option value="">All purposes</option>
+              <option value="brands">brands</option>
+              <option value="category">category</option>
+              <option value="products">products</option>
+              <option value="others">others</option>
+              <option value="all">all</option>
+              </select>
+              <select id="extension" class="border rounded-lg p-2">
+              <option value="">All types</option>
+              <option value="pdf">pdf</option>
+              <option value="jpg">jpg</option>
+              <option value="jpeg">jpeg</option>
+              <option value="png">png</option>
+              <option value="webp">webp</option>
+              </select>
+              <input id="nameSearch" class="border rounded-lg p-2" placeholder="Search by file name…" />
+              <button class="bg-gray-900 text-white rounded-lg px-4 py-2">Apply</button>
+          </form>
         </div>
 
         <!-- Content -->
@@ -37,22 +37,7 @@
     </div>
   </div>
 
-  <script>
-    // Sidebar controls
-    function openSidebar() {
-      document.getElementById('sidebar').style.transform = 'translateX(0)';
-      document.getElementById('overlay').classList.remove('hidden');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').style.transform = 'translateX(-100%)';
-      document.getElementById('overlay').classList.add('hidden');
-    }
-    // Init year
-    document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Run when Chart is loaded
-    // window.addEventListener('load', initCharts);
-  </script>
 
 <script>
   const ENDPOINT = `<?php echo BASE_URL; ?>/helper/fetch_upload.php`;
@@ -279,5 +264,4 @@
   // Initial load
   fetchUploads();
 </script>
-</body>
-</html>
+<?php include("footer.php"); ?>

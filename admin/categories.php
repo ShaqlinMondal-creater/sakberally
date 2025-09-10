@@ -80,336 +80,287 @@
 </div>
 </div>
 
-<script>
-  // Debounce function to limit the rate of function execution
-  function debounce(fn, ms = 350) {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn(...args), ms);
+  <script>
+    // Debounce function to limit the rate of function execution
+    function debounce(fn, ms = 350) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+      };
+    }
+
+    /* ======= CONFIG ======= */
+    const EBASE_URL = '<?php echo BASE_URL; ?>';
+    const FETCH_API_URL = EBASE_URL + '/categories/fetch.php';  // Fetch Categories
+    const CREATE_API_URL = EBASE_URL + '/categories/create.php'; // Create Category
+
+    /* ======= STATE ======= */
+    const state = {
+      name: '',          // search
+      limit: 100,        // limit set to 100
+      offset: 0,
+      count: 0,
+      loading: false
     };
-  }
 
-  /* ======= CONFIG ======= */
-  const EBASE_URL = '<?php echo BASE_URL; ?>';
-  const FETCH_API_URL = EBASE_URL + '/categories/fetch.php';  // Fetch Categories
-  const CREATE_API_URL = EBASE_URL + '/categories/create.php'; // Create Category
+    /* ======= DOM ======= */
+    const $tbody   = document.getElementById('tbodyCategories');
+    const $meta    = document.getElementById('meta');
+    const $status  = document.getElementById('status');
+    const $msg     = document.getElementById('serverMessage');
+    const $prev    = document.getElementById('btnPrev');
+    const $next    = document.getElementById('btnNext');
+    const $search  = document.getElementById('searchName');
+    const $limit   = document.getElementById('limit');
+    
+    const $addCategoryPopup = document.getElementById('addCategoryPopup');
+    const $addCategoryForm  = document.getElementById('addCategoryForm');
+    const $categoryName     = document.getElementById('categoryName');
+    const $categoryImage    = document.getElementById('categoryImage');
 
-  /* ======= STATE ======= */
-  const state = {
-    name: '',          // search
-    limit: 100,        // limit set to 100
-    offset: 0,
-    count: 0,
-    loading: false
-  };
+    /* ======= HELPERS ======= */
+    const imgOr = (a, b) => a || b || '';
+    const escapeHtml = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  /* ======= DOM ======= */
-  const $tbody   = document.getElementById('tbodyCategories');
-  const $meta    = document.getElementById('meta');
-  const $status  = document.getElementById('status');
-  const $msg     = document.getElementById('serverMessage');
-  const $prev    = document.getElementById('btnPrev');
-  const $next    = document.getElementById('btnNext');
-  const $search  = document.getElementById('searchName');
-  const $limit   = document.getElementById('limit');
-  
-  const $addCategoryPopup = document.getElementById('addCategoryPopup');
-  const $addCategoryForm  = document.getElementById('addCategoryForm');
-  const $categoryName     = document.getElementById('categoryName');
-  const $categoryImage    = document.getElementById('categoryImage');
+    function setLoading(v) {
+      state.loading = v;
+      $status.textContent = v ? 'Loading…' : '';
+      [ $prev, $next ].forEach(b => v ? b.classList.add('btn-disabled') : b.classList.remove('btn-disabled'));
+    }
 
-  /* ======= HELPERS ======= */
-  const imgOr = (a, b) => a || b || '';
-  const escapeHtml = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    // Render categories rows with action buttons
+    function renderRows(categories) {
+      $tbody.innerHTML = '';
+      if (!categories || !categories.length) {
+        $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
+        return;
+      }
 
-  function setLoading(v) {
-    state.loading = v;
-    $status.textContent = v ? 'Loading…' : '';
-    [ $prev, $next ].forEach(b => v ? b.classList.add('btn-disabled') : b.classList.remove('btn-disabled'));
-  }
+      const frag = document.createDocumentFragment();
+      categories.forEach(c => {
+        // Replace '../' with the base URL in category image path
+        const image = c.category_image_path ? c.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
 
-  // function renderRows(categories) {
-  //   $tbody.innerHTML = '';
-  //   if (!categories || !categories.length) {
-  //     $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
-  //     return;
-  //   }
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
+          <td class="px-4 py-3">
+            ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
+          </td>
+          <td class="px-4 py-3">
+            <!-- Action Buttons (Delete, Update, Others) -->
+            <div class="flex gap-2">
+              <!-- Delete Button -->
+              <button class="text-red-600 hover:text-red-800" title="Delete">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+                </svg>
+              </button>
+              <!-- Update Button -->
+              <button class="text-blue-600 hover:text-blue-800" title="Update" onclick="openUpdatePopup(${c.id}, '${c.name}', ${c.sort_no}, '${c.category_image_path}')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+                </svg>
+              </button>
+              <!-- Other Button -->
+              <button class="text-green-600 hover:text-green-800" title="Other Actions">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+        frag.appendChild(tr);
+      });
+      $tbody.appendChild(frag);
+    }
 
-  //   const frag = document.createDocumentFragment();
-  //   categories.forEach(c => {
-  //     // Replace '../' with the base URL in category image path
-  //     const image = c.category_image_path ? c.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
+    // Open SweetAlert popup for updating category
+    function openUpdatePopup(id, name, sort_no, category_image_path) {
+      Swal.fire({
+        title: 'Update Category',
+        html: `
+          <input type="text" id="categoryId" class="swal2-input" value="${id}" readonly />
+          <input type="text" id="categoryName" class="swal2-input" value="${name}" />
+          <input type="number" id="categorySortId" class="swal2-input" value="${sort_no}" />
+          <input type="file" id="categoryImage" class="swal2-input" accept="image/*" />
+          ${category_image_path ? `<img src="${category_image_path}" alt="Current Image" class="w-16 h-16 mt-2" />` : ''}
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+          const categoryName = document.getElementById('categoryName').value;
+          const categorySortId = document.getElementById('categorySortId').value;
+          const categoryImage = document.getElementById('categoryImage').files[0];
+          const categoryId = document.getElementById('categoryId').value;
 
-  //     const tr = document.createElement('tr');
-  //     tr.innerHTML = `
-  //       <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
-  //       <td class="px-4 py-3">
-  //         ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
-  //       </td>
-  //       <td class="px-4 py-3">
-  //         <!-- Action Buttons (Delete, Update, Others) -->
-  //         <div class="flex gap-2">
-  //           <!-- Delete Button -->
-  //           <button class="text-red-600 hover:text-red-800" title="Delete">
-  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-  //             </svg>
-  //           </button>
-  //           <!-- Update Button -->
-  //           <button class="text-blue-600 hover:text-blue-800" title="Update">
-  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-  //             </svg>
-  //           </button>
-  //           <!-- Others Button -->
-  //           <button class="text-green-600 hover:text-green-800" title="Other Actions">
-  //             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-  //               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-  //             </svg>
-  //           </button>
-  //         </div>
-  //       </td>
-  //     `;
-  //     frag.appendChild(tr);
-  //   });
-  //   $tbody.appendChild(frag);
-  // }
+          if (!categoryName && !categoryImage && !categorySortId) {
+            Swal.showValidationMessage('Please enter at least one field to update');
+          } else {
+            return {
+              id: categoryId,
+              name: categoryName,
+              sort_id: categorySortId,
+              category_image: categoryImage // Only send the file if a new one is selected
+            };
+          }
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const formData = new FormData();
+          formData.append('id', result.value.id);
+          formData.append('name', result.value.name || ''); // Always append name (even empty)
+          formData.append('sort_no', result.value.sort_id || 0); // Always append sort_no (even empty)
 
-// Render categories rows with action buttons
-function renderRows(categories) {
-  $tbody.innerHTML = '';
-  if (!categories || !categories.length) {
-    $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No categories found</td></tr>`;
-    return;
-  }
+          // If no new image is selected, send the current image path or empty string
+          if (result.value.category_image) {
+            formData.append('category_image', result.value.category_image); // Append new image
+          } else {
+            // If no new image is selected, we append the current image path (or empty string)
+            formData.append('category_image', category_image_path || ''); // Send current path if available
+          }
 
-  const frag = document.createDocumentFragment();
-  categories.forEach(c => {
-    // Replace '../' with the base URL in category image path
-    const image = c.category_image_path ? c.category_image_path.replace('../', '<?php echo BASE_URL; ?>/') : '';
+          formData.append('token', localStorage.getItem('user_token')); // Pass token
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="px-4 py-3">${escapeHtml(c.name || '')}</td>
-      <td class="px-4 py-3">
-        ${image ? `<img src="${image}" alt="${c.name}" class="w-16 h-16 object-cover rounded bg-gray-100">` : '—'}
-      </td>
-      <td class="px-4 py-3">
-        <!-- Action Buttons (Delete, Update, Others) -->
-        <div class="flex gap-2">
-          <!-- Delete Button -->
-          <button class="text-red-600 hover:text-red-800" title="Delete">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-            </svg>
-          </button>
-          <!-- Update Button -->
-          <button class="text-blue-600 hover:text-blue-800" title="Update" onclick="openUpdatePopup(${c.id}, '${c.name}', ${c.sort_no}, '${c.category_image_path}')">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-            </svg>
-          </button>
-          <!-- Other Button -->
-          <button class="text-green-600 hover:text-green-800" title="Other Actions">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-            </svg>
-          </button>
-        </div>
-      </td>
-    `;
-    frag.appendChild(tr);
-  });
-  $tbody.appendChild(frag);
-}
+          try {
+            const response = await fetch('<?php echo BASE_URL; ?>/categories/update.php', {
+              method: 'POST',
+              body: formData
+            });
 
-// Open SweetAlert popup for updating category
-function openUpdatePopup(id, name, sort_no, category_image_path) {
-  Swal.fire({
-    title: 'Update Category',
-    html: `
-      <input type="text" id="categoryId" class="swal2-input" value="${id}" readonly />
-      <input type="text" id="categoryName" class="swal2-input" value="${name}" />
-      <input type="number" id="categorySortId" class="swal2-input" value="${sort_no}" />
-      <input type="file" id="categoryImage" class="swal2-input" accept="image/*" />
-      ${category_image_path ? `<img src="${category_image_path}" alt="Current Image" class="w-16 h-16 mt-2" />` : ''}
-    `,
-    focusConfirm: false,
-    preConfirm: () => {
-      const categoryName = document.getElementById('categoryName').value;
-      const categorySortId = document.getElementById('categorySortId').value;
-      const categoryImage = document.getElementById('categoryImage').files[0];
-      const categoryId = document.getElementById('categoryId').value;
+            const json = await response.json();
 
-      if (!categoryName && !categoryImage && !categorySortId) {
-        Swal.showValidationMessage('Please enter at least one field to update');
-      } else {
-        return {
-          id: categoryId,
-          name: categoryName,
-          sort_id: categorySortId,
-          category_image: categoryImage // Only send the file if a new one is selected
+            if (json.success) {
+              Swal.fire('Success!', json.message, 'success');
+              fetchCategories(); // Re-fetch the categories after update
+            } else {
+              Swal.fire('Error!', json.message, 'error');
+            }
+          } catch (error) {
+            Swal.fire('Error!', 'Failed to update category', 'error');
+          }
+        }
+      });
+    }
+
+
+    function updateMeta() {
+      const start = state.count ? state.offset + 1 : 0;
+      const end = Math.min(state.offset + state.limit, state.count);
+      $meta.textContent = `Showing ${start}–${end} of ${state.count}`;
+      $prev.classList.toggle('btn-disabled', state.offset <= 0);
+      $next.classList.toggle('btn-disabled', state.offset + state.limit >= state.count);
+    }
+
+    /* ======= API ======= */
+    async function fetchCategories() {
+      setLoading(true);
+      try {
+        const body = {
+          name: state.name || "",
+          limit: state.limit,
+          offset: state.offset
         };
+        const res = await fetch(FETCH_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+
+        $msg.textContent = json.message || '';
+        if (!json.success) throw new Error(json.message || 'Request failed');
+
+        const data = json.data || { count: 0, categories: [] };
+        state.count = Number(data.count) || 0;
+
+        renderRows(data.categories || []);
+        updateMeta();
+      } catch (err) {
+        console.error(err);
+        $msg.textContent = 'Failed to fetch categories';
+        $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-red-600">Error loading categories</td></tr>`;
+        state.count = 0;
+        updateMeta();
+      } finally {
+        setLoading(false);
       }
     }
-  }).then(async (result) => {
-    if (result.isConfirmed) {
+
+    // Open the add category popup
+    function openAddCategoryPopup() {
+      $addCategoryPopup.classList.remove('hidden');
+    }
+
+    // Close the add category popup
+    function closeAddCategoryPopup() {
+      $addCategoryPopup.classList.add('hidden');
+    }
+
+    // Handle category form submission
+    $addCategoryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('user_token');
       const formData = new FormData();
-      formData.append('id', result.value.id);
-      formData.append('name', result.value.name || ''); // Always append name (even empty)
-      formData.append('sort_no', result.value.sort_id || 0); // Always append sort_no (even empty)
-
-      // If no new image is selected, send the current image path or empty string
-      if (result.value.category_image) {
-        formData.append('category_image', result.value.category_image); // Append new image
-      } else {
-        // If no new image is selected, we append the current image path (or empty string)
-        formData.append('category_image', category_image_path || ''); // Send current path if available
-      }
-
-      formData.append('token', localStorage.getItem('user_token')); // Pass token
+      formData.append('name', $categoryName.value);
+      formData.append('category_image', $categoryImage.files[0]);
+      formData.append('sort_no', 0);  // default sort_no
+      formData.append('token', token); // Include the token in the form data
 
       try {
-        const response = await fetch('<?php echo BASE_URL; ?>/categories/update.php', {
+        const res = await fetch(CREATE_API_URL, {
           method: 'POST',
           body: formData
         });
 
-        const json = await response.json();
+        const json = await res.json();
 
         if (json.success) {
-          Swal.fire('Success!', json.message, 'success');
-          fetchCategories(); // Re-fetch the categories after update
+          alert('Category created successfully!');
+          closeAddCategoryPopup();
+          fetchCategories(); // Re-fetch the categories list to update the table
         } else {
-          Swal.fire('Error!', json.message, 'error');
+          alert('Error: ' + json.message);
         }
-      } catch (error) {
-        Swal.fire('Error!', 'Failed to update category', 'error');
+      } catch (err) {
+        console.error(err);
+        alert('Failed to create category');
       }
-    }
-  });
-}
+    });
 
+    /* ======= EVENTS ======= */
+    $search.addEventListener('input', debounce(e => {
+      state.name = e.target.value.trim();
+      state.offset = 0;
+      fetchCategories();
+    }));
 
-  function updateMeta() {
-    const start = state.count ? state.offset + 1 : 0;
-    const end = Math.min(state.offset + state.limit, state.count);
-    $meta.textContent = `Showing ${start}–${end} of ${state.count}`;
-    $prev.classList.toggle('btn-disabled', state.offset <= 0);
-    $next.classList.toggle('btn-disabled', state.offset + state.limit >= state.count);
-  }
+    $limit.addEventListener('change', e => {
+      state.limit = Number(e.target.value) || 100;
+      state.offset = 0;
+      fetchCategories();
+    });
 
-  /* ======= API ======= */
-  async function fetchCategories() {
-    setLoading(true);
-    try {
-      const body = {
-        name: state.name || "",
-        limit: state.limit,
-        offset: state.offset
-      };
-      const res = await fetch(FETCH_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
+    $prev.addEventListener('click', () => {
+      if (state.offset <= 0) return;
+      state.offset = Math.max(0, state.offset - state.limit);
+      fetchCategories();
+    });
 
-      $msg.textContent = json.message || '';
-      if (!json.success) throw new Error(json.message || 'Request failed');
+    $next.addEventListener('click', () => {
+      if (state.offset + state.limit >= state.count) return;
+      state.offset += state.limit;
+      fetchCategories();
+    });
 
-      const data = json.data || { count: 0, categories: [] };
-      state.count = Number(data.count) || 0;
+    /* ======= INIT ======= */
+    (function init(){
+      $search.value = '';
+      fetchCategories();
+    })();
+  </script>
+<?php include("footer.php"); ?>
 
-      renderRows(data.categories || []);
-      updateMeta();
-    } catch (err) {
-      console.error(err);
-      $msg.textContent = 'Failed to fetch categories';
-      $tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-red-600">Error loading categories</td></tr>`;
-      state.count = 0;
-      updateMeta();
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Open the add category popup
-  function openAddCategoryPopup() {
-    $addCategoryPopup.classList.remove('hidden');
-  }
-
-  // Close the add category popup
-  function closeAddCategoryPopup() {
-    $addCategoryPopup.classList.add('hidden');
-  }
-
-  // Handle category form submission
-  $addCategoryForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem('user_token');
-    const formData = new FormData();
-    formData.append('name', $categoryName.value);
-    formData.append('category_image', $categoryImage.files[0]);
-    formData.append('sort_no', 0);  // default sort_no
-    formData.append('token', token); // Include the token in the form data
-
-    try {
-      const res = await fetch(CREATE_API_URL, {
-        method: 'POST',
-        body: formData
-      });
-
-      const json = await res.json();
-
-      if (json.success) {
-        alert('Category created successfully!');
-        closeAddCategoryPopup();
-        fetchCategories(); // Re-fetch the categories list to update the table
-      } else {
-        alert('Error: ' + json.message);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Failed to create category');
-    }
-  });
-
-  /* ======= EVENTS ======= */
-  $search.addEventListener('input', debounce(e => {
-    state.name = e.target.value.trim();
-    state.offset = 0;
-    fetchCategories();
-  }));
-
-  $limit.addEventListener('change', e => {
-    state.limit = Number(e.target.value) || 100;
-    state.offset = 0;
-    fetchCategories();
-  });
-
-  $prev.addEventListener('click', () => {
-    if (state.offset <= 0) return;
-    state.offset = Math.max(0, state.offset - state.limit);
-    fetchCategories();
-  });
-
-  $next.addEventListener('click', () => {
-    if (state.offset + state.limit >= state.count) return;
-    state.offset += state.limit;
-    fetchCategories();
-  });
-
-  /* ======= INIT ======= */
-  (function init(){
-    $search.value = '';
-    fetchCategories();
-  })();
-</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.all.min.js"></script>
-</body>
-</html>
