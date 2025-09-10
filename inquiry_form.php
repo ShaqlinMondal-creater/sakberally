@@ -52,18 +52,14 @@
                                 class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required></textarea>
 
                         <!-- Attachment -->
-                        <div>
-                        <label for="attachments" class="block mb-1">Attachment (optional)</label>
-                        <input id="attachments" name="attachments" type="file"
-                                class="block w-full text-sm text-gray-900 bg-white border-2 border-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-black file:text-white file:uppercase file:tracking-wide hover:file:bg-neutral-900" />
-                        </div>
-
-                        <!-- Submit -->
-                        <div class="pt-2 flex justify-start">
-                        <button id="submitBtns" type="submit"
-                                class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
-                            Submit
-                        </button>
+                        <div class="pt-2 flex justify-start">    
+                          <button id="submitBtns" type="submit" class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
+                              Submit
+                          </button>
+                          <div>
+                              <label for="attachments" class="block mb-1">Attachment (optional)</label>
+                              <input id="attachments" name="attachments" type="file" class="block text-sm text-gray-900 bg-white border-2 border-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-black file:text-white file:uppercase file:tracking-wide hover:file:bg-neutral-900">
+                          </div>
                         </div>
                     </form>
                 </div>
