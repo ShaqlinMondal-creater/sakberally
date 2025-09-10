@@ -3,7 +3,7 @@
       <!-- Content -->
       <main class="p-4 sm:p-6 lg:p-8 space-y-6">
         <!-- Table + Sidebar widgets -->
-        <section class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <section class="grid grid-cols-1 xl:grid-cols-1 gap-4">
             <!-- Activity -->
             <div class="bg-white rounded-xl shadow p-4">
                 <h3 class="font-semibold mb-3">Queries</h3>
