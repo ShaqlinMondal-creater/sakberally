@@ -21,37 +21,48 @@
           Quick Inquiry
         </h2>
 
-        <form action="/submit_inquiry.php" method="post" class="space-y-4">
+        <!-- Add an id so we can target it in JS -->
+        <form id="inquiryForm" class="space-y-4" enctype="multipart/form-data">
+          <!-- Hidden subject default -->
+          <input type="hidden" name="subject" value="inquery" />
+
           <!-- Row 1 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label class="sr-only" for="first_name">First Name</label>
             <input id="first_name" name="first_name" type="text" placeholder="First Name"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                  class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
 
             <label class="sr-only" for="last_name">Last Name</label>
             <input id="last_name" name="last_name" type="text" placeholder="Last Name"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                  class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
           </div>
 
           <!-- Row 2 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label class="sr-only" for="email">Email Id</label>
             <input id="email" name="email" type="email" placeholder="Email Id"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                  class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
 
             <label class="sr-only" for="phone">Phone Number</label>
             <input id="phone" name="phone" type="tel" placeholder="Phone Number"
-                   class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
+                  class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
           </div>
 
           <!-- Message -->
           <label class="sr-only" for="message">Message</label>
           <textarea id="message" name="message" rows="4" placeholder="Message"
-                    class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400  focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none"></textarea>
+                    class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required></textarea>
+
+          <!-- Attachment -->
+          <div>
+            <label for="attachment" class="block mb-1">Attachment (optional)</label>
+            <input id="attachment" name="attachment" type="file"
+                  class="block w-full text-sm text-gray-900 bg-white border-2 border-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-black file:text-white file:uppercase file:tracking-wide hover:file:bg-neutral-900" />
+          </div>
 
           <!-- Submit -->
           <div class="pt-2 flex justify-start">
-            <button type="submit"
+            <button id="submitBtn" type="submit"
                     class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
               Submit
             </button>
@@ -62,59 +73,7 @@
   </div>
 </section>
 
-<div class="md:col-span-7 text-white">
-  <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-    Quick Inquiry
-  </h2>
 
-  <!-- Add an id so we can target it in JS -->
-  <form id="inquiryForm" class="space-y-4" enctype="multipart/form-data">
-    <!-- Hidden subject default -->
-    <input type="hidden" name="subject" value="inquery" />
-
-    <!-- Row 1 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <label class="sr-only" for="first_name">First Name</label>
-      <input id="first_name" name="first_name" type="text" placeholder="First Name"
-             class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
-
-      <label class="sr-only" for="last_name">Last Name</label>
-      <input id="last_name" name="last_name" type="text" placeholder="Last Name"
-             class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" />
-    </div>
-
-    <!-- Row 2 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <label class="sr-only" for="email">Email Id</label>
-      <input id="email" name="email" type="email" placeholder="Email Id"
-             class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
-
-      <label class="sr-only" for="phone">Phone Number</label>
-      <input id="phone" name="phone" type="tel" placeholder="Phone Number"
-             class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required />
-    </div>
-
-    <!-- Message -->
-    <label class="sr-only" for="message">Message</label>
-    <textarea id="message" name="message" rows="4" placeholder="Message"
-              class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required></textarea>
-
-    <!-- Attachment -->
-    <div>
-      <label for="attachment" class="block mb-1">Attachment (optional)</label>
-      <input id="attachment" name="attachment" type="file"
-             class="block w-full text-sm text-gray-900 bg-white border-2 border-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-black file:text-white file:uppercase file:tracking-wide hover:file:bg-neutral-900" />
-    </div>
-
-    <!-- Submit -->
-    <div class="pt-2 flex justify-start">
-      <button id="submitBtn" type="submit"
-              class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
-        Submit
-      </button>
-    </div>
-  </form>
-</div>
 
 <script>
   // If you're rendering base_url server-side, leave as-is; otherwise set manually:
