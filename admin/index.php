@@ -3,63 +3,48 @@
       <!-- Content -->
       <main class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-        <!-- Stat cards -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-500">Total Orders</p>
-              <span class="text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded-full">+8%</span>
-            </div>
-            <p class="mt-2 text-3xl font-semibold">1,284</p>
-            <p class="text-xs text-gray-500 mt-1">vs last 30 days</p>
-          </div>
-
-          <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-500">Revenue</p>
-              <span class="text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
-            </div>
-            <p class="mt-2 text-3xl font-semibold">₹ 18.6L</p>
-            <p class="text-xs text-gray-500 mt-1">incl. taxes</p>
-          </div>
-
-          <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-500">New Customers</p>
-              <span class="text-red-600 text-xs bg-red-50 px-2 py-0.5 rounded-full">-2%</span>
-            </div>
-            <p class="mt-2 text-3xl font-semibold">246</p>
-            <p class="text-xs text-gray-500 mt-1">this month</p>
-          </div>
-
-          <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-500">Pending Orders</p>
-              <span class="text-yellow-700 text-xs bg-yellow-50 px-2 py-0.5 rounded-full">42</span>
-            </div>
-            <p class="mt-2 text-3xl font-semibold">138</p>
-            <p class="text-xs text-gray-500 mt-1">awaiting fulfillment</p>
-          </div>
-        </section>
-
         <!-- Charts -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div class="bg-white rounded-xl shadow p-4 lg:col-span-2">
-            <div class="flex items-center justify-between">
-              <h3 class="font-semibold">Sales Overview</h3>
-              <select class="text-sm bg-gray-100 rounded px-2 py-1">
-                <option>Last 6 months</option>
-                <option>Last 12 months</option>
-                <option>This year</option>
-              </select>
+            <div class="bg-white rounded-xl shadow p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-500">Total Orders</p>
+                <span class="text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded-full">+8%</span>
+              </div>
+              <p class="mt-2 text-3xl font-semibold">1,284</p>
+              <p class="text-xs text-gray-500 mt-1">vs last 30 days</p>
             </div>
-            <div class="mt-3">
-              <canvas id="salesChart" height="110"></canvas>
+
+            <div class="bg-white rounded-xl shadow p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-500">Revenue</p>
+                <span class="text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
+              </div>
+              <p class="mt-2 text-3xl font-semibold">₹ 18.6L</p>
+              <p class="text-xs text-gray-500 mt-1">incl. taxes</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-500">New Customers</p>
+                <span class="text-red-600 text-xs bg-red-50 px-2 py-0.5 rounded-full">-2%</span>
+              </div>
+              <p class="mt-2 text-3xl font-semibold">246</p>
+              <p class="text-xs text-gray-500 mt-1">this month</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-500">Pending Orders</p>
+                <span class="text-yellow-700 text-xs bg-yellow-50 px-2 py-0.5 rounded-full">42</span>
+              </div>
+              <p class="mt-2 text-3xl font-semibold">138</p>
+              <p class="text-xs text-gray-500 mt-1">awaiting fulfillment</p>
             </div>
           </div>
 
           <div class="bg-white rounded-xl shadow p-4">
-            <h3 class="font-semibold">Orders by Status</h3>
+            <h3 class="font-semibold">Table by Status</h3>
             <div class="mt-3">
               <canvas id="statusChart" height="110"></canvas>
             </div>
