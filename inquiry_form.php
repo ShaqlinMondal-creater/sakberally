@@ -52,7 +52,7 @@
                                 class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-400 focus:border-black/60 focus:ring-2 focus:ring-black/30 outline-none" required></textarea>
 
                         <!-- Attachment -->
-                        <div class="pt-2 flex justify-start">    
+                        <div class="pt-2 flex justify-between">    
                           <button id="submitBtns" type="submit" class="px-8 py-3 bg-black text-white font-semibold tracking-wide uppercase hover:bg-neutral-900 transition">
                               Submit
                           </button>
