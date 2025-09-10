@@ -165,6 +165,6 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') panel.classList.add('hidden'); });
     });
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.all.min.js"></script>
 </body>
 </html>
