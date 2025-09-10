@@ -90,7 +90,7 @@
     const email = (document.getElementById('email').value || '').trim();
     const phone = (document.getElementById('phone').value || '').trim();
     const msg   = (document.getElementById('message').value || '').trim();
-    const subject = 'inquery'; // default as required
+    const subject = 'inquiry'; // default as required
     const fileInput = document.getElementById('attachment');
 
     // Build FormData as required by API
