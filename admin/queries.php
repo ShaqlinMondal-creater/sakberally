@@ -18,6 +18,7 @@
   </div>
 
 <script>
+  const BASE_URL = "<?php echo BASE_URL; ?>";
   const queriesList = document.getElementById("queriesList");
 
   // Format date: "19th February 2025, 12.05AM"
@@ -66,7 +67,7 @@
   // Turn "../uploads/..." into absolute path like `${BASE_URL}/uploads/...`
   function resolveUploadPath(path) {
     if (!path) return null;
-    const base = <?php echo BASE_URL; ?>.replace(/\/+$/,""); // trim trailing slash
+    const base = BASE_URL.replace(/\/+$/,""); // trim trailing slash
     if (path.startsWith("../")) return base + "/" + path.replace(/^\.{2}\//, "");
     if (path.startsWith("./"))  return base + "/" + path.replace(/^\.\//, "");
     return path; // already absolute
