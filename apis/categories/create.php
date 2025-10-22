@@ -6,10 +6,30 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(405, ['success' => false, 'message' => 'Method Not Allowed']);
 }
 
-// Expecting multipart/form-data (for optional image)
-$token  = trim($_POST['token'] ?? '');
-$name   = trim((string)($_POST['name'] ?? ''));
-$sortNo = isset($_POST['sort_no']) ? (int)$_POST['sort_no'] : 0;
+$token    = trim($_POST['token'] ?? '');
+$name     = trim((string)($_POST['name'] ?? ''));
+$sortNo   = isset($_POST['sort_no']) ? (int)$_POST['sort_no'] : 0;
+
+// === parent_id logic ===
+$parentId = 0; // default to 0 (means top-level category)
+if (isset($_POST['parent_id']) && $_POST['parent_id'] !== '' && $_POST['parent_id'] !== null) {
+    $tmpPid = (int)$_POST['parent_id'];
+    if ($tmpPid < 0) {
+        json_out(422, ['success' => false, 'message' => 'Invalid parent_id']);
+    }
+    // verify parent exists (ignore if 0)
+    if ($tmpPid > 0) {
+        $chk = $mysqli->prepare("SELECT id FROM t_categories WHERE id = ? LIMIT 1");
+        $chk->bind_param('i', $tmpPid);
+        $chk->execute();
+        $exists = $chk->get_result()->fetch_assoc();
+        $chk->close();
+        if (!$exists) {
+            json_out(422, ['success' => false, 'message' => 'parent_id does not reference an existing category']);
+        }
+    }
+    $parentId = $tmpPid;
+}
 
 if ($token === '')  json_out(422, ['success' => false, 'message' => 'token is required']);
 if ($name === '')   json_out(422, ['success' => false, 'message' => 'name is required']);
@@ -45,7 +65,6 @@ function save_upload(mysqli $mysqli, array $file, string $destDir): array {
     $orig = $file['name'];
     $size = (int)$file['size'];
 
-    // allow common image types
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime  = $finfo->file($tmp) ?: 'application/octet-stream';
     $allowed = ['image/jpeg','image/png','image/webp','image/gif'];
@@ -62,10 +81,8 @@ function save_upload(mysqli $mysqli, array $file, string $destDir): array {
         json_out(500, ['success' => false, 'message' => 'Failed to move uploaded file']);
     }
 
-    // store forward-slash path
     $filePath = str_replace('\\', '/', $targetAbs);
 
-    // insert upload record
     $ins = $mysqli->prepare("INSERT INTO t_uploads (purpose, file_original_name, file_path, size, extension) VALUES (?,?,?,?,?)");
     $purpose = 'category';
     $extDb = $ext ?: '';
@@ -90,13 +107,11 @@ if (isset($_FILES['category_image']) && $_FILES['category_image']['error'] !== U
 }
 
 // --- Insert category ---
-$stmt = $mysqli->prepare("INSERT INTO t_categories (name, category_image_id, sort_no) VALUES (?,?,?)");
-if ($imgId === null) {
-    $null = null;
-    $stmt->bind_param('sii', $name, $null, $sortNo);
-} else {
-    $stmt->bind_param('sii', $name, $imgId, $sortNo);
-}
+$stmt = $mysqli->prepare("
+    INSERT INTO t_categories (name, parent_id, category_image_id, sort_no)
+    VALUES (?,?,?,?)
+");
+$stmt->bind_param('siii', $name, $parentId, $imgId, $sortNo);
 
 if (!$stmt->execute()) {
     json_out(500, ['success' => false, 'message' => 'Failed to create category', 'error' => $stmt->error]);
@@ -104,7 +119,6 @@ if (!$stmt->execute()) {
 $catId = (int)$stmt->insert_id;
 $stmt->close();
 
-// --- Response (201) ---
 json_out(201, [
     'success' => true,
     'message' => 'Category created',
@@ -112,6 +126,7 @@ json_out(201, [
         'token'               => $token,
         'category_id'         => $catId,
         'name'                => $name,
+        'parent_id'           => $parentId, // always integer (0 for parent)
         'sort_no'             => $sortNo,
         'category_image_id'   => $imgId,
         'category_image_path' => $imgPath
