@@ -94,6 +94,8 @@
     const EBASE_URL = '<?php echo BASE_URL; ?>';
     const FETCH_API_URL = EBASE_URL + '/categories/fetch.php';  // Fetch Categories
     const CREATE_API_URL = EBASE_URL + '/categories/create.php'; // Create Category
+    const UPDATE_API_URL = EBASE_URL + '/categories/update.php';
+    const DELETE_API_URL = EBASE_URL + '/categories/delete.php';
 
     /* ======= STATE ======= */
     const state = {
@@ -152,22 +154,18 @@
             <!-- Action Buttons (Delete, Update, Others) -->
             <div class="flex gap-2">
               <!-- Delete Button -->
-              <button class="text-red-600 hover:text-red-800" title="Delete">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-                </svg>
+              <button class="text-red-600 hover:text-red-800 btn-delete" title="Delete"
+                data-id="${c.id}" data-name="${escapeHtml(c.name || '')}"
+              >
+                Delete
               </button>
               <!-- Update Button -->
               <button class="text-blue-600 hover:text-blue-800" title="Update" onclick="openUpdatePopup(${c.id}, '${c.name}', ${c.sort_no}, '${c.category_image_path}')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
-                </svg>
+                Update
               </button>
               <!-- Other Button -->
               <button class="text-green-600 hover:text-green-800" title="Other Actions">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
-                </svg>
+                Other
               </button>
             </div>
           </td>
@@ -177,73 +175,144 @@
       $tbody.appendChild(frag);
     }
 
-    // Open SweetAlert popup for updating category
+    // Build a safe absolute image URL from path returned by API
+    function buildImageUrl(category_image_path) {
+      if (!category_image_path) return '';
+      // handle "../" style paths coming from backend
+      const cleaned = category_image_path.replace(/^(\.\.\/)+/, '');
+      return EBASE_URL.replace(/\/+$/, '') + '/' + cleaned.replace(/^\/+/, '');
+    }
+
     function openUpdatePopup(id, name, sort_no, category_image_path) {
+      const currentImgUrl = buildImageUrl(category_image_path);
+
       Swal.fire({
         title: 'Update Category',
+        // Responsive 2-col grid on wide screens, 1-col on small screens
         html: `
-          <input type="text" id="categoryId" class="swal2-input" value="${id}" readonly />
-          <input type="text" id="categoryName" class="swal2-input" value="${name}" />
-          <input type="number" id="categorySortId" class="swal2-input" value="${sort_no}" />
-          <input type="file" id="categoryImage" class="swal2-input" accept="image/*" />
-          ${category_image_path ? `<img src="${category_image_path}" alt="Current Image" class="w-16 h-16 mt-2" />` : ''}
+          <style>
+            .upd-grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+            @media(max-width:520px){.upd-grid{grid-template-columns:1fr}}
+            .upd-field label{display:block;font-size:12px;color:#6b7280;margin-bottom:6px}
+            .upd-field input[type="text"],
+            .upd-field input[type="number"],
+            .upd-field input[type="file"]{
+              width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px
+            }
+            .upd-img-wrap{
+              display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap
+            }
+            .upd-thumb{
+              width:72px;height:72px;border-radius:8px;object-fit:cover;background:#f3f4f6;border:1px solid #e5e7eb
+            }
+            .upd-note{font-size:12px;color:#6b7280}
+          </style>
+
+          <div class="upd-grid">
+            <div class="upd-field">
+              <label>Category ID</label>
+              <input type="text" id="upd_category_id" value="${String(id ?? '').replace(/"/g,'&quot;')}" readonly>
+            </div>
+            <div class="upd-field">
+              <label>Sort ID <span class="upd-note">(optional)</span></label>
+              <input type="number" id="upd_sort_id" placeholder="e.g. 10" value="${Number(sort_no ?? 0)}">
+            </div>
+
+            <div class="upd-field" style="grid-column:1/-1">
+              <label>Category Name <span class="upd-note">(optional)</span></label>
+              <input type="text" id="upd_name" placeholder="Enter new name"
+                    value="${String(name ?? '').replace(/"/g,'&quot;')}">
+            </div>
+
+            <div class="upd-field" style="grid-column:1/-1">
+              <label>Category Image <span class="upd-note">(optional)</span></label>
+              <div class="upd-img-wrap">
+                <input type="file" id="upd_image" accept="image/*">
+                <img id="upd_preview" class="upd-thumb" src="${currentImgUrl || ''}" alt="Preview">
+              </div>
+              <div class="upd-note" style="margin-top:6px">
+                If you don’t choose a new image, the current one (if any) remains unchanged.
+              </div>
+            </div>
+          </div>
         `,
         focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+        cancelButtonText: 'Cancel',
+        didOpen: () => {
+          // Live preview when user picks a new file
+          const $file = document.getElementById('upd_image');
+          const $prev = document.getElementById('upd_preview');
+          $file.addEventListener('change', () => {
+            const f = $file.files && $file.files[0];
+            if (f) {
+              const reader = new FileReader();
+              reader.onload = e => { $prev.src = e.target.result; };
+              reader.readAsDataURL(f);
+            } else {
+              // reset to original
+              $prev.src = currentImgUrl || '';
+            }
+          });
+        },
         preConfirm: () => {
-          const categoryName = document.getElementById('categoryName').value;
-          const categorySortId = document.getElementById('categorySortId').value;
-          const categoryImage = document.getElementById('categoryImage').files[0];
-          const categoryId = document.getElementById('categoryId').value;
+          const category_id = document.getElementById('upd_category_id').value.trim();
+          const name        = document.getElementById('upd_name').value.trim();
+          const sort_id_raw = document.getElementById('upd_sort_id').value;
+          const sort_id     = sort_id_raw === '' ? null : Number(sort_id_raw);
+          const imageFile   = document.getElementById('upd_image').files[0] || null;
 
-          if (!categoryName && !categoryImage && !categorySortId) {
-            Swal.showValidationMessage('Please enter at least one field to update');
-          } else {
-            return {
-              id: categoryId,
-              name: categoryName,
-              sort_id: categorySortId,
-              category_image: categoryImage // Only send the file if a new one is selected
-            };
+          if (!category_id) {
+            Swal.showValidationMessage('Missing category_id.');
+            return false;
           }
+
+          // Prepare exactly what we’ll send; we’ll still build FormData after confirm
+          return { category_id, name, sort_id, imageFile };
         }
       }).then(async (result) => {
-        if (result.isConfirmed) {
-          const formData = new FormData();
-          formData.append('id', result.value.id);
-          formData.append('name', result.value.name || ''); // Always append name (even empty)
-          formData.append('sort_no', result.value.sort_id || 0); // Always append sort_no (even empty)
+        if (!result.isConfirmed) return;
 
-          // If no new image is selected, send the current image path or empty string
-          if (result.value.category_image) {
-            formData.append('category_image', result.value.category_image); // Append new image
+        try {
+          const { category_id, name, sort_id, imageFile } = result.value;
+          const token = localStorage.getItem('user_token');
+
+          if (!token) {
+            Swal.fire('Error', 'Authentication token not found. Please login again.', 'error');
+            return;
+          }
+
+          // Build FormData as required by your API
+          const fd = new FormData();
+          fd.append('token', token);                 // mandatory
+          fd.append('category_id', category_id);     // mandatory
+
+          // Append optional fields ONLY if user provided them
+          if (name)    fd.append('name', name);      // optional
+          if (sort_id !== null && !Number.isNaN(sort_id)) fd.append('sort_no', String(sort_id));
+          if (imageFile) fd.append('category_image', imageFile); // optional
+
+          const res = await fetch(UPDATE_API_URL, { method: 'POST', body: fd });
+          const json = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+
+          if (json && json.success) {
+            Swal.fire('Updated', json.message || 'Category updated successfully.', 'success');
+            fetchCategories(); // refresh table
           } else {
-            // If no new image is selected, we append the current image path (or empty string)
-            formData.append('category_image', category_image_path || ''); // Send current path if available
+            throw new Error(json && json.message ? json.message : 'Update failed.');
           }
 
-          formData.append('token', localStorage.getItem('user_token')); // Pass token
-
-          try {
-            const response = await fetch('<?php echo BASE_URL; ?>/categories/update.php', {
-              method: 'POST',
-              body: formData
-            });
-
-            const json = await response.json();
-
-            if (json.success) {
-              Swal.fire('Success!', json.message, 'success');
-              fetchCategories(); // Re-fetch the categories after update
-            } else {
-              Swal.fire('Error!', json.message, 'error');
-            }
-          } catch (error) {
-            Swal.fire('Error!', 'Failed to update category', 'error');
-          }
+        } catch (err) {
+          console.error(err);
+          Swal.fire('Error', err.message || 'Failed to update category.', 'error');
         }
       });
     }
-
 
     function updateMeta() {
       const start = state.count ? state.offset + 1 : 0;
@@ -252,6 +321,53 @@
       $prev.classList.toggle('btn-disabled', state.offset <= 0);
       $next.classList.toggle('btn-disabled', state.offset + state.limit >= state.count);
     }
+
+    async function confirmAndDelete(category_id, name) {
+      const token = localStorage.getItem('user_token');
+      if (!token) {
+        Swal.fire('Error', 'Authentication token not found. Please login again.', 'error');
+        return;
+      }
+
+      Swal.fire({
+        title: `Delete “${name}”?`,
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#dc2626',
+        showLoaderOnConfirm: true,
+        allowOutsideClick: () => !Swal.isLoading(),
+        preConfirm: async () => {
+          try {
+            const res = await fetch(DELETE_API_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                token: token,            // mandatory
+                category_id: Number(category_id) // mandatory
+              })
+            });
+
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            if (!json.success) throw new Error(json.message || 'Delete failed.');
+            return json;
+          } catch (err) {
+            Swal.showValidationMessage(err.message || 'Failed to delete.');
+            return false;
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire('Deleted', (result.value && result.value.message) || 'Category deleted.', 'success');
+          // Refresh the list
+          fetchCategories();
+        }
+      });
+    }
+
 
     /* ======= API ======= */
     async function fetchCategories() {
@@ -356,7 +472,16 @@
       fetchCategories();
     });
 
-    /* ======= INIT ======= */
+    // 👇 ADD THIS RIGHT HERE
+    document.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('.btn-delete');
+      if (!delBtn) return;
+
+      const categoryId = delBtn.dataset.id;
+      const categoryName = delBtn.dataset.name || 'this category';
+      confirmAndDelete(categoryId, categoryName);
+    });
+    
     (function init(){
       $search.value = '';
       fetchCategories();
