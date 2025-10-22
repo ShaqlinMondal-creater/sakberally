@@ -57,8 +57,8 @@
 </main>
 
 <!-- Add Category Popup (Hidden by default) -->
-<div id="addCategoryPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden justify-center items-center">
-  <div class="bg-white p-6 rounded-lg w-1/3">
+<div id="addCategoryPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden flex justify-center items-center">
+  <div class="bg-white p-6 rounded-lg w-full max-w-lg sm:max-w-xl mx-4">
     <h3 class="text-xl font-semibold mb-4">Add New Category</h3>
     <form id="addCategoryForm" enctype="multipart/form-data">
       <div class="mb-4">
@@ -69,6 +69,24 @@
         <label for="categoryImage" class="block text-sm font-medium text-gray-700">Category Image</label>
         <input type="file" id="categoryImage" name="category_image" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30" />
       </div>
+      <!-- Sort No -->
+      <div class="mb-4">
+        <label for="categorySortNo" class="block text-sm font-medium text-gray-700">Sort No</label>
+        <input type="number" id="categorySortNo" name="sort_no"
+              class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30"
+              value="0" />
+      </div>
+
+      <!-- Parent Category -->
+      <div class="mb-4">
+        <label for="parentCategory" class="block text-sm font-medium text-gray-700">Parent Category (optional)</label>
+        <select id="parentCategory" name="parent_id"
+                class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30">
+          <option value="">— None —</option>
+          <!-- options will be injected via JS -->
+        </select>
+      </div>
+
       <div class="flex justify-end gap-3">
         <button type="button" class="px-4 py-2 rounded-lg bg-gray-300 text-white" onclick="closeAddCategoryPopup()">Cancel</button>
         <button type="submit" class="px-4 py-2 rounded-lg bg-brand text-white hover:bg-brand-700">Save Category</button>
@@ -376,7 +394,8 @@
         const body = {
           name: state.name || "",
           limit: state.limit,
-          offset: state.offset
+          offset: state.offset,
+          wise: "simple"
         };
         const res = await fetch(FETCH_API_URL, {
           method: 'POST',
@@ -407,6 +426,15 @@
 
     // Open the add category popup
     function openAddCategoryPopup() {
+      // reset fields
+      $addCategoryForm.reset();
+      $categorySortNo.value = 0;         // default
+      $parentCategory.innerHTML = '<option value="">— None —</option>';
+
+      // load parent categories (async but fast)
+      loadParentCategoriesForSelect();
+
+      // show popup
       $addCategoryPopup.classList.remove('hidden');
     }
 
@@ -423,7 +451,19 @@
       const formData = new FormData();
       formData.append('name', $categoryName.value);
       formData.append('category_image', $categoryImage.files[0]);
-      formData.append('sort_no', 0);  // default sort_no
+      // formData.append('sort_no', 0);  // default sort_no
+      // sort_no from the field
+      const sortNoVal = $categorySortNo.value;
+      if (sortNoVal !== '' && !Number.isNaN(Number(sortNoVal))) {
+        formData.append('sort_no', String(Number(sortNoVal)));
+      }
+
+      // parent category (only if selected)
+      const parentVal = $parentCategory.value;
+      if (parentVal) {
+        // change 'parent_id' to whatever your backend expects
+        formData.append('parent_id', parentVal);
+      }
       formData.append('token', token); // Include the token in the form data
 
       try {
@@ -487,5 +527,44 @@
       fetchCategories();
     })();
   </script>
+  
+<script>
+  const $categorySortNo  = document.getElementById('categorySortNo');
+  const $parentCategory  = document.getElementById('parentCategory');
+
+  async function loadParentCategoriesForSelect() {
+    try {
+      const res = await fetch(FETCH_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: "",
+          limit: 1000,   // big enough to cover all
+          offset: 0
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || 'Failed to load categories');
+
+      const list = (json.data && json.data.categories) ? json.data.categories : [];
+      // reset options (keep the "— None —")
+      $parentCategory.innerHTML = '<option value="">— None —</option>';
+      const frag = document.createDocumentFragment();
+
+      list.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;                  // assumes backend uses id
+        opt.textContent = c.name || `#${c.id}`;
+        frag.appendChild(opt);
+      });
+
+      $parentCategory.appendChild(frag);
+    } catch (err) {
+      console.error('Parent category load failed:', err);
+      // Still keep the "None" option
+    }
+  }
+</script>
 <?php include("footer.php"); ?>
 
