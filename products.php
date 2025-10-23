@@ -37,9 +37,9 @@
         </section>
 
     </main>
-<script>
-        // ====== CONFIG ======
-         const API_URL = `<?php echo BASE_URL; ?>/products/fetch.php`;
+<!-- <script>
+  // ====== CONFIG ======
+  const API_URL = `<?php echo BASE_URL; ?>/products/fetch.php`;
 
   // URL params
   const params = new URLSearchParams(location.search);
@@ -268,7 +268,232 @@
   // If URL had a category, keep it & use category behavior automatically.
   fetchProducts(false);
   io.observe(sentinel);
+</script> -->
+
+<script>
+  // ====== CONFIG ======
+  const API_URL = `<?php echo BASE_URL; ?>/products/fetch.php`;
+
+  // URL params
+  const params = new URLSearchParams(location.search);
+  const urlCategory = (params.get('category') || '').trim();
+
+  // ====== STATE ======
+  const gridEl = document.getElementById('productsGrid');
+  const countLabel = document.getElementById('countLabel');
+  const sentinel = document.getElementById('infiniteSentinel');
+
+  const searchInput = document.getElementById('searchInput');
+  const categorySelect = document.getElementById('categorySelect');
+
+  let totalCount = 0;           // from API
+  let shownCount = 0;           // rendered count
+  let offset = 0;               // API offset
+  let loading = false;
+  let allLoaded = false;
+
+  // Behaviors based on params
+  const NO_PARAM_MODE = urlCategory === '';
+  const MAX_CAP_NO_PARAM = 500;
+  const FIRST_PAGE_SIZE_NO_PARAM = 24;
+  const NEXT_PAGE_SIZE_NO_PARAM = 500;
+  const PAGE_SIZE_CATEGORY = 500;
+
+  // Current filters
+  let currentName = '';
+  let currentCategory = urlCategory || '';
+
+  // Prefill UI from param
+  if (urlCategory) {
+    categorySelect.value = urlCategory;
+  }
+
+  // ====== HELPERS ======
+  function fmtPrice(p) {
+    if (p === null || p === undefined) return '';
+    const num = Number(p);
+    if (Number.isNaN(num)) return String(p);
+    return num === 0 ? '—' : `₹ ${num.toLocaleString('en-IN')}`;
+  }
+
+  // Get primary image from API shape (uploads[0].upload_path), with fallbacks
+  function getPrimaryImage(item) {
+    const firstUpload = Array.isArray(item.uploads) && item.uploads[0]?.upload_path
+      ? item.uploads[0].upload_path
+      : null;
+
+    const src = firstUpload || item.upload_path || item.file_path || item.upd_link || '';
+    if (!src) return 'assets/images/placeholder-product.png';
+
+    // Already absolute or data URI?
+    if (/^(https?:)?\/\//i.test(src) || /^data:/i.test(src)) return src;
+
+    // Otherwise, join with BASE_URL
+    const BASE = '<?php echo BASE_URL; ?>/';
+    const cleaned = src.replace(/^(\.\.\/)+|^\.\/+/, '');
+    return BASE.replace(/\/+$/, '') + '/' + cleaned.replace(/^\/+/, '');
+  }
+
+  function truncateText(text = '', maxLength = 20) {
+    return text.length > maxLength ? (text.substring(0, maxLength) + '...') : text;
+  }
+
+  function createCard(item) {
+    const card = document.createElement('article');
+    card.className = "group border border-red-200 bg-white overflow-hidden rounded cursor-pointer";
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = "h-40 sm:h-48 md:h-60 lg:h-72 flex items-center justify-center p-4 sm:p-6";
+
+    const img = document.createElement('img');
+    img.src = getPrimaryImage(item);
+    img.alt = item.name || '';
+    img.className = "max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]";
+    img.onerror = () => { img.src = 'assets/images/placeholder-product.png'; };
+
+    // Go to detail on image click
+    imgWrap.addEventListener('click', () => {
+      const productId = item.id;
+      // If your file is product_detail.php, use that. If you have routing, keep as-is.
+      window.location.href = `product_detail?id=${productId}`;
+      // window.location.href = `product_detail.php?id=${productId}`; // <- use this if needed
+    });
+
+    imgWrap.appendChild(img);
+
+    const title = document.createElement('div');
+    title.className = "h-20 title bg-red-600 text-white text-center uppercase tracking-wide font-serif font-semibold text-xs sm:text-sm md:text-base leading-tight flex items-center justify-center px-2";
+    title.textContent = truncateText(item.name, 20);
+
+    const footer = document.createElement('div');
+    footer.className = "px-3 py-2 flex items-center justify-center text-sm";
+
+    const viewBtn = document.createElement('button');
+    viewBtn.className = "text-red-600 hover:text-red-700 font-semibold";
+    viewBtn.textContent = "View Specification";
+    viewBtn.addEventListener('click', () => {
+      const productId = item.id;
+      window.location.href = `product_detail?id=${productId}`;
+      // window.location.href = `product_detail.php?id=${productId}`; // <- use this if needed
+    });
+
+    footer.appendChild(viewBtn);
+
+    card.appendChild(imgWrap);
+    card.appendChild(title);
+    card.appendChild(footer);
+    return card;
+  }
+
+  function updateCountLabel() {
+    const targetTotal = NO_PARAM_MODE ? Math.min(totalCount, MAX_CAP_NO_PARAM) : totalCount;
+    countLabel.textContent = targetTotal
+      ? `Showing ${shownCount} of ${targetTotal}${NO_PARAM_MODE && totalCount > MAX_CAP_NO_PARAM ? ' (capped at 500)' : ''}`
+      : '';
+  }
+
+  function getNextLimit() {
+    if (NO_PARAM_MODE) {
+      return (offset === 0) ? FIRST_PAGE_SIZE_NO_PARAM : NEXT_PAGE_SIZE_NO_PARAM;
+    }
+    return PAGE_SIZE_CATEGORY;
+  }
+
+  function reachedCap() {
+    if (!NO_PARAM_MODE) return false;
+    return shownCount >= Math.min(totalCount, MAX_CAP_NO_PARAM);
+  }
+
+  // ====== API ======
+  async function fetchProducts(append = true) {
+    if (loading || allLoaded || reachedCap()) return;
+    loading = true;
+
+    const limit = getNextLimit();
+
+    const payload = {
+      name: currentName || "",
+      category: currentCategory || "",
+      limit,
+      offset
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const json = await res.json();
+      const data = json?.data || {};
+      totalCount = Number(data.count || 0);
+      const products = Array.isArray(data.products) ? data.products : [];
+
+      if (!append) gridEl.innerHTML = "";
+
+      products.forEach(p => {
+        if (NO_PARAM_MODE && shownCount >= MAX_CAP_NO_PARAM) return; // enforce cap
+        gridEl.appendChild(createCard(p));
+        shownCount++;
+      });
+
+      offset += products.length;
+
+      const targetTotal = NO_PARAM_MODE ? Math.min(totalCount, MAX_CAP_NO_PARAM) : totalCount;
+      if (shownCount >= targetTotal || products.length === 0) {
+        allLoaded = true;
+      }
+
+      updateCountLabel();
+    } catch (e) {
+      console.error('Fetch failed:', e);
+      if (!append) {
+        gridEl.innerHTML = `<div class="col-span-full text-center text-red-600">
+          Failed to load products. Please try again.
+        </div>`;
+      }
+      allLoaded = true;
+    } finally {
+      loading = false;
+    }
+  }
+
+  // ====== Infinite Scroll ======
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) fetchProducts(true);
+    });
+  }, { rootMargin: '600px 0px' });
+
+  // ====== Events ======
+  categorySelect.addEventListener('change', () => {
+    currentCategory = categorySelect.value.trim();
+    resetState();
+    fetchProducts(false);
+  });
+
+  searchInput.addEventListener('input', () => {
+    // Only fetch when user types 3+ chars to reduce server calls
+    if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
+      currentName = searchInput.value.trim();
+      resetState();
+      fetchProducts(false);
+    }
+  });
+
+  function resetState() {
+    totalCount = 0;
+    shownCount = 0;
+    offset = 0;
+    allLoaded = false;
+  }
+
+  // ====== INIT ======
+  fetchProducts(false);
+  io.observe(sentinel);
 </script>
-</script>
+
 
 <?php include("footer.php"); ?>

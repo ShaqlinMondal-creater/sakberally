@@ -82,7 +82,7 @@
   </div>
 </section>
 
-<script>
+<!-- <script>
   // Fetch product details from API
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('id');
@@ -111,11 +111,11 @@
 
       // Set product image and gallery
       const mainImage = document.getElementById('pd-main');
-      mainImage.src = normalizePath(product.upload_path);
+      mainImage.src = product.upload_path;
       
       const thumbsContainer = document.getElementById('thumbs-container');
       thumbsContainer.innerHTML = `<button class="thumb shrink-0 w-24 h-24 overflow-hidden rounded-lg border border-gray-200" data-src="${normalizePath(product.upload_path)}">
-        <img src="${normalizePath(product.upload_path)}" class="h-full w-full object-contain" />
+        <img src="${product.upload_path}" class="h-full w-full object-contain" />
       </button>`;
 
       // Set brochure link
@@ -149,6 +149,95 @@
       const src = btn.getAttribute('data-src');
       document.getElementById('pd-main').src = src;
     });
+  });
+</script> -->
+
+<script>
+  // --- helpers ---
+  const qs  = (s, r = document) => r.querySelector(s);
+
+  // Grab ?id= from URL
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+
+  if (!productId) {
+    alert('No product id provided.');
+  }
+
+  const apiUrl = '<?php echo BASE_URL; ?>/products/fetch.php';
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: productId }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!(data?.success) || !data?.data?.products?.length) {
+      alert('Product not found.');
+      return;
+    }
+
+    const product = data.data.products[0];
+
+    // Basic fields
+    qs('#product-name').textContent = product.name ?? 'Product';
+    qs('#product-description').innerHTML = product.description ?? '';
+
+    // --- Images ---
+    const uploads = Array.isArray(product.uploads) ? product.uploads : [];
+    const firstImg = uploads[0]?.upload_path || '';
+
+    const mainImageEl = qs('#pd-main');
+    mainImageEl.src = firstImg;
+
+    const thumbsContainer = qs('#thumbs-container');
+    if (uploads.length) {
+      thumbsContainer.innerHTML = uploads.map(u => `
+        <button class="thumb shrink-0 w-24 h-24 overflow-hidden rounded-lg border border-gray-200" data-src="${u.upload_path}">
+          <img src="${u.upload_path}" class="h-full w-full object-contain" alt="thumb">
+        </button>
+      `).join('');
+    } else {
+      thumbsContainer.innerHTML = '';
+    }
+
+    // --- Specs ---
+    const specsContainer = qs('#product-specs');
+    specsContainer.innerHTML = '';
+    if (product.features) {
+      const doc = new DOMParser().parseFromString(product.features, 'text/html');
+      const rows = doc.querySelectorAll('tr');
+      rows.forEach(row => {
+        const tds = row.querySelectorAll('td');
+        if (tds.length >= 2) {
+          const specName  = tds[0].textContent?.trim() || '';
+          const specValue = tds[1].textContent?.trim() || '';
+          if (specName || specValue) {
+            specsContainer.insertAdjacentHTML('beforeend', `
+              <div>
+                <div class="text-sm text-gray-500">${specName}</div>
+                <div class="font-medium text-gray-900">${specValue}</div>
+              </div>
+            `);
+          }
+        }
+      });
+    }
+  })
+  .catch(err => {
+    console.error('Error fetching product details:', err);
+    alert('Failed to load product details.');
+  });
+
+  // --- Gallery click swap ---
+  document.getElementById('thumbs-container').addEventListener('click', (e) => {
+    const btn = e.target.closest('.thumb');
+    if (!btn) return;
+    const src = btn.getAttribute('data-src');
+    if (src) {
+      document.getElementById('pd-main').src = src;
+    }
   });
 </script>
 
