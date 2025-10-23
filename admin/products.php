@@ -72,7 +72,7 @@
 </div>
 </div>
 
-<script>
+<!-- <script>
   /* ======= CONFIG ======= */
   
   const API_URL  = '<?php echo BASE_URL; ?>/products/fetch.php';
@@ -154,21 +154,17 @@
           ${image ? '<a href="'+image+'" target="_blank" class="text-brand hover:underline">Open</a>' : '—'}
         </td>
         <td class="px-4 py-3">
-          <!-- Action Buttons (Delete, Update, Others) -->
           <div class="flex gap-2">
-            <!-- Delete Button -->
             <button class="text-red-600 hover:text-red-800" title="Delete">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
               </svg>
             </button>
-            <!-- Update Button -->
             <button class="text-blue-600 hover:text-blue-800" title="Update">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
               </svg>
             </button>
-            <!-- Others Button -->
             <button class="text-green-600 hover:text-green-800" title="Other Actions">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
@@ -269,5 +265,238 @@
     $search.value = '';
     fetchProducts();
   })();
+</script> -->
+
+<script>
+  /* ======= CONFIG ======= */
+  const API_URL  = '<?php echo BASE_URL; ?>/products/fetch.php';
+  const FALLBACK_IMG = 'assets/images/placeholder-product.png';
+  /* ======= SIDEBAR ======= */
+  function openSidebar() { document.getElementById('sidebar')?.style && (document.getElementById('sidebar').style.transform = 'translateX(0)'); document.getElementById('overlay')?.classList?.remove('hidden'); }
+  function closeSidebar() { document.getElementById('sidebar')?.style && (document.getElementById('sidebar').style.transform = 'translateX(-100%)'); document.getElementById('overlay')?.classList?.add('hidden'); }
+  const yEl = document.getElementById('year'); if (yEl) yEl.textContent = new Date().getFullYear();
+
+  /* ======= STATE ======= */
+  const state = {
+    name: '',          // search
+    category: '',      // filter
+    limit: 500,        // you can change via dropdown
+    offset: 0,
+    count: 0,
+    loading: false
+  };
+
+  /* ======= DOM ======= */
+  const $tbody   = document.getElementById('tbodyProducts');
+  const $meta    = document.getElementById('meta');
+  const $status  = document.getElementById('status');
+  const $msg     = document.getElementById('serverMessage');
+  const $prev    = document.getElementById('btnPrev');
+  const $next    = document.getElementById('btnNext');
+  const $search  = document.getElementById('searchName');
+  const $cat     = document.getElementById('filterCategory');
+  const $limit   = document.getElementById('limit');
+
+  /* ======= HELPERS ======= */
+  const currency = (n) => {
+    if (n === null || n === undefined) return '—';
+    const num = Number(n);
+    if (!isFinite(num) || num <= 0) return '—';
+    return '₹ ' + num.toLocaleString('en-IN');
+  };
+
+  // Safely get the primary image: prefer uploads[0].upload_path; fallback to other fields; then placeholder
+  function getPrimaryImage(p) {
+    const firstUpload = Array.isArray(p.uploads) && p.uploads[0]?.upload_path
+      ? p.uploads[0].upload_path
+      : null;
+
+    const src = firstUpload || p.upload_path || p.file_path || p.upd_link || '';
+    if (!src) return FALLBACK_IMG;  // ✅ local placeholder instead of via.placeholder.com
+
+    // absolute or data URI?
+    if (/^(https?:)?\/\//i.test(src) || /^data:/i.test(src)) return src;
+
+    // relative path → join with BASE_URL
+    const BASE = '<?php echo BASE_URL; ?>/';
+    const cleaned = src.replace(/^(\.\.\/)+|^\.\/+/, '');
+    return BASE.replace(/\/+$/, '') + '/' + cleaned.replace(/^\/+/, '');
+  }
+
+  function setLoading(v) {
+    state.loading = v;
+    $status.textContent = v ? 'Loading…' : '';
+    [$prev, $next].forEach(b => b && (v ? b.classList.add('btn-disabled') : b.classList.remove('btn-disabled')));
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function renderRows(products) {
+    $tbody.innerHTML = '';
+    if (!products || !products.length) {
+      $tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No products found</td></tr>`;
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    products.forEach(p => {
+      const tr = document.createElement('tr');
+      const imgUrl = getPrimaryImage(p);
+      const price = currency(p.price);
+
+      tr.innerHTML = `
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-3">
+            <img src="${imgUrl || FALLBACK_IMG}" alt="" class="w-14 h-14 object-cover rounded bg-gray-100"
+                onerror="this.onerror=null; this.src='assets/images/placeholder-product.png'">
+            <div>
+              <div class="font-medium">${escapeHtml(p.name || '')}</div>
+              <div class="text-gray-500 text-xs">${(p.unit || '').toString()}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3">${escapeHtml(p.category_name || '')}</td>
+        <td class="px-4 py-3">${price}</td>
+        <td class="px-4 py-3">
+          ${p.features ? '<span class="text-xs text-gray-500">HTML</span>' : '<span class="text-xs text-gray-400">—</span>'}
+        </td>
+        <td class="px-4 py-3">
+          ${imgUrl ? '<a href="'+imgUrl+'" target="_blank" class="text-brand hover:underline">Open</a>' : '—'}
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-2">
+            <!-- Delete Button -->
+            <button class="text-red-600 hover:text-red-800 btn-delete" data-id="${p.id}" title="Delete">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
+              </svg>
+            </button>
+            <!-- Update Button -->
+            <button class="text-blue-600 hover:text-blue-800 btn-update" data-id="${p.id}" title="Update">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3h4v4m0 0L7 17l-4 4m16-6l-3 3m0 0L5 7"/>
+              </svg>
+            </button>
+            <!-- Others Button -->
+            <button class="text-green-600 hover:text-green-800 btn-more" data-id="${p.id}" title="Other Actions">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0h-4"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      `;
+      frag.appendChild(tr);
+    });
+    $tbody.appendChild(frag);
+  }
+
+  function updateMeta() {
+    const start = state.count ? state.offset + 1 : 0;
+    const end = Math.min(state.offset + state.limit, state.count);
+    $meta.textContent = `Showing ${start}–${end} of ${state.count}`;
+    $prev.classList.toggle('btn-disabled', state.offset <= 0);
+    $next.classList.toggle('btn-disabled', state.offset + state.limit >= state.count);
+  }
+
+  /* ======= API ======= */
+  async function fetchProducts() {
+    setLoading(true);
+    try {
+      const body = {
+        name: state.name || "",
+        category: state.category || "",
+        limit: state.limit,
+        offset: state.offset
+      };
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+
+      $msg.textContent = json.message || '';
+      if (!json.success) throw new Error(json.message || 'Request failed');
+
+      const data = json.data || { count: 0, products: [] };
+      state.count = Number(data.count) || 0;
+
+      renderRows(data.products || []);
+      updateMeta();
+    } catch (err) {
+      console.error(err);
+      $msg.textContent = 'Failed to fetch products';
+      $tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-red-600">Error loading products</td></tr>`;
+      state.count = 0;
+      updateMeta();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ======= EVENTS ======= */
+  function debounce(fn, ms=350){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+  $search.addEventListener('input', debounce(e => {
+    state.name = e.target.value.trim();
+    state.offset = 0;
+    fetchProducts();
+  }));
+
+  $cat.addEventListener('change', e => {
+    state.category = e.target.value;
+    state.offset = 0;
+    fetchProducts();
+  });
+
+  $limit.addEventListener('change', e => {
+    state.limit = Number(e.target.value) || 10;
+    state.offset = 0;
+    fetchProducts();
+  });
+
+  $prev.addEventListener('click', () => {
+    if (state.offset <= 0) return;
+    state.offset = Math.max(0, state.offset - state.limit);
+    fetchProducts();
+  });
+
+  $next.addEventListener('click', () => {
+    if (state.offset + state.limit >= state.count) return;
+    state.offset += state.limit;
+    fetchProducts();
+  });
+
+  // Optional: action buttons (wire up to your APIs later)
+  document.addEventListener('click', (e) => {
+    const del = e.target.closest('.btn-delete');
+    const upd = e.target.closest('.btn-update');
+    const more = e.target.closest('.btn-more');
+    if (del) {
+      const id = del.dataset.id;
+      console.log('Delete product', id); // call your delete API here
+    }
+    if (upd) {
+      const id = upd.dataset.id;
+      console.log('Update product', id); // open update modal / navigate
+    }
+    if (more) {
+      const id = more.dataset.id;
+      console.log('More actions for', id);
+    }
+  });
+
+  /* ======= INIT ======= */
+  (function init(){
+    if ($limit) $limit.value = String(state.limit);
+    if ($search) $search.value = '';
+    fetchProducts();
+  })();
 </script>
+
+
 <?php include("footer.php"); ?>
