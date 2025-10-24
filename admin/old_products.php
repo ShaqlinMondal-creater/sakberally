@@ -303,8 +303,6 @@
             <!-- Update Button -->
             <button class="text-blue-600 hover:text-blue-800 btn-update" data-id="${p.id}" data-category-id="${p.category_id ?? ''}"
               data-brand-id="${p.brand_id ?? ''}" data-price="${p.price ?? ''}" data-name="${escapeHtml(p.name || '')}" 
-              data-short="${escapeHtml(p.short_description || '')}" data-desc="${encodeURIComponent(p.description || '')}" 
-              data-features-html="${encodeURIComponent(p.features || '')}" 
               data-uploads="${encodeURIComponent(JSON.stringify(p.uploads || []))}" title="Update"
             >
               Update
@@ -597,64 +595,129 @@
     `;
   }
 
-  function parseFeaturesHtmlToPairs(html) {
-    const pairs = [];
-    if (!html) return pairs;
-    try {
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      // naive: look for <tr><td>key</td><td>value</td>
-      div.querySelectorAll('tr').forEach(tr => {
-        const tds = tr.querySelectorAll('td');
-        if (tds.length >= 2) {
-          const k = tds[0].textContent.trim().replace(/\s+/g, ' ');
-          const v = tds[1].textContent.trim().replace(/\s+/g, ' ');
-          if (k) pairs.push([k, v]);
-        }
-      });
-    } catch(_) {}
-    return pairs;
-  }
-  function collectFeaturePairsFromDom(container) {
-    const rows = container.querySelectorAll('.sw-feature-row');
-    const out = {};
-    rows.forEach(row => {
-      const k = row.querySelector('.sw-fk')?.value.trim() || '';
-      const v = row.querySelector('.sw-fv')?.value.trim() || '';
-      if (k) out[k] = v;
-    });
-    return out;
-  }
-  function renderFeaturesRows(pairs) {
-    if (!pairs || !pairs.length) pairs = [['','']];
-    return pairs.map(([k,v]) => `
-      <div class="sw-feature-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px">
-        <input class="swal-input sw-fk" placeholder="Key (e.g., color)" value="${(k||'').replace(/"/g,'&quot;')}">
-        <input class="swal-input sw-fv" placeholder="Value (e.g., Matte Black)" value="${(v||'').replace(/"/g,'&quot;')}">
-        <button type="button" class="sw-fdel" style="border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;color:#ef4444">Remove</button>
-      </div>
-    `).join('');
-  }
+  // async function updateProduct(productId) {
+  //   const token = localStorage.getItem('user_token') || '';
+  //   if (!token) { $msg.textContent = 'Unauthorized: missing token.'; return; }
+
+  //   // Read current values from the row/button
+  //   const row = findRowByProductId(productId);
+  //   const btn = row?.querySelector(`.btn-update[data-id="${productId}"]`);
+  //   const currentName  = btn?.dataset.name || row?.querySelector('td:nth-child(1) .font-medium')?.textContent?.trim() || '';
+  //   const currentPrice = btn?.dataset.price || row?.querySelector('td:nth-child(3)')?.textContent?.replace(/[₹,]/g,'').trim() || '';
+  //   const currentCatId = btn?.dataset.categoryId || '';
+  //   const currentBrandId = btn?.dataset.brandId || '';
+  //   const currentCatName = row?.querySelector('td:nth-child(2)')?.textContent?.trim() || '';
+
+  //   // Load lists in parallel
+  //   const [cats, brands] = await Promise.all([fetchCategoriesSimple(), fetchBrandsList()]);
+
+  //   // If we don't have category_id but have name, try to match by name
+  //   let selectedCatId = currentCatId;
+  //   if (!selectedCatId && currentCatName) {
+  //     const match = cats.find(c => (c.name || '').toLowerCase() === currentCatName.toLowerCase());
+  //     if (match) selectedCatId = String(match.id);
+  //   }
+
+  //   // Build selects
+  //   const catOptions   = buildOptions(cats, selectedCatId || null);
+  //   const brandOptions = buildOptions(brands, currentBrandId || null);
+
+  //   // Clean layout: 2-column grid in Swal
+  //   const html = `
+  //     <style>
+  //       .swal-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  //       .swal-form-grid .full { grid-column: 1 / -1; }
+  //       .swal-label { font-size:12px; color:#6b7280; display:block; margin-bottom:4px; }
+  //       .swal-input, .swal-select { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; }
+  //     </style>
+  //     <div class="swal-form-grid">
+  //       <div class="full">
+  //         <label class="swal-label">Name</label>
+  //         <input id="sw-name" class="swal-input" placeholder="Product Name" value="${currentName.replace(/"/g,'&quot;')}">
+  //       </div>
+  //       <div>
+  //         <label class="swal-label">Price</label>
+  //         <input id="sw-price" class="swal-input" type="number" step="0.01" placeholder="Price" value="${currentPrice}">
+  //       </div>
+  //       <div>
+  //         <label class="swal-label">Category</label>
+  //         <select id="sw-category" class="swal-select">${catOptions}</select>
+  //       </div>
+  //       <div>
+  //         <label class="swal-label">Brand</label>
+  //         <select id="sw-brand" class="swal-select">${brandOptions}</select>
+  //       </div>
+  //     </div>
+  //     <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave fields empty to keep existing values.</p>
+  //   `;
+
+  //   const { value: formValues } = await Swal.fire({
+  //     title: 'Update Product',
+  //     html,
+  //     focusConfirm: false,
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Update',
+  //     preConfirm: () => {
+  //       const name = document.getElementById('sw-name').value.trim();
+  //       const priceStr = document.getElementById('sw-price').value;
+  //       const category_id = document.getElementById('sw-category').value;
+  //       const brand_id = document.getElementById('sw-brand').value;
+
+  //       const out = { };
+  //       if (name) out.name = name;
+  //       if (priceStr) {
+  //         const num = Number(priceStr);
+  //         if (isNaN(num) || num < 0) {
+  //           Swal.showValidationMessage('Price must be a valid non-negative number.');
+  //           return false;
+  //         }
+  //         out.price = num;
+  //       }
+  //       if (category_id) out.category_id = Number(category_id);
+  //       if (brand_id) out.brand_id = Number(brand_id);
+  //       return out;
+  //     }
+  //   });
+
+  //   if (!formValues) return; // user cancelled
+
+  //   const payload = {
+  //     token,
+  //     product_id: Number(productId),
+  //     ...formValues
+  //   };
+
+  //   try {
+  //     const res = await fetch(UPDATE_API_URL, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(payload)
+  //     });
+  //     const json = await res.json().catch(() => ({}));
+  //     if (!res.ok || json.success === false) throw new Error(json.message || `HTTP ${res.status}`);
+
+  //     Swal.fire('Updated!', json.message || 'Product updated successfully.', 'success');
+  //     fetchProducts();
+  //   } catch (err) {
+  //     console.error(err);
+  //     Swal.fire('Error', err.message || 'Failed to update product.', 'error');
+  //   }
+  // }
 
   async function updateProduct(productId) {
     const token = localStorage.getItem('user_token') || '';
     if (!token) { $msg.textContent = 'Unauthorized: missing token.'; return; }
 
-    // Read current values from the row/button
+    // Get current values
     const row = findRowByProductId(productId);
     const btn = row?.querySelector(`.btn-update[data-id="${productId}"]`);
-    const currentName   = btn?.dataset.name || row?.querySelector('td:nth-child(1) .font-medium')?.textContent?.trim() || '';
-    const currentPrice  = btn?.dataset.price || row?.querySelector('td:nth-child(3)')?.textContent?.replace(/[₹,]/g,'').trim() || '';
-    const currentCatId  = btn?.dataset.categoryId || '';
-    const currentBrandId= btn?.dataset.brandId || '';
-    const currentUnit   = btn?.dataset.unit || '';
-    const currentShort  = btn?.dataset.short || '';
-    const currentDesc   = btn?.dataset.desc ? decodeURIComponent(btn.dataset.desc) : ''; // server HTML
-    const currentCatName= row?.querySelector('td:nth-child(2)')?.textContent?.trim() || '';
-    const featuresHtml  = btn?.dataset.featuresHtml ? decodeURIComponent(btn.dataset.featuresHtml) : '';
-    let featurePairs    = parseFeaturesHtmlToPairs(featuresHtml); // [["color","Matte Black"], ...]
+    const currentName  = btn?.dataset.name || row?.querySelector('td:nth-child(1) .font-medium')?.textContent?.trim() || '';
+    const currentPrice = btn?.dataset.price || row?.querySelector('td:nth-child(3)')?.textContent?.replace(/[₹,]/g,'').trim() || '';
+    const currentCatId = btn?.dataset.categoryId || '';
+    const currentBrandId = btn?.dataset.brandId || '';
+    const currentCatName = row?.querySelector('td:nth-child(2)')?.textContent?.trim() || '';
 
-    // Decode uploaded images
+    // Decode uploads from data-attr
     let uploads = [];
     try {
       const raw = btn?.dataset.uploads ? JSON.parse(decodeURIComponent(btn.dataset.uploads)) : [];
@@ -681,13 +744,10 @@
         .swal-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         .swal-form-grid .full { grid-column: 1 / -1; }
         .swal-label { font-size:12px; color:#6b7280; display:block; margin-bottom:4px; }
-        .swal-input, .swal-select, .swal-textarea { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; }
-        .swal-textarea { min-height:90px; }
+        .swal-input, .swal-select { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; }
         .sw-actions-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
         .sw-upload-btn { padding:8px 12px; border-radius:8px; background:#2563eb; color:#fff; border:none; }
         .sw-upload-msg { font-size:12px; color:#6b7280; margin-top:4px; }
-        .sw-feat-header { display:flex; align-items:center; justify-content:space-between; }
-        .sw-feat-add { border:1px solid #e5e7eb; border-radius:8px; padding:8px 10px; }
       </style>
 
       <div class="swal-form-grid">
@@ -695,45 +755,17 @@
           <label class="swal-label">Name</label>
           <input id="sw-name" class="swal-input" placeholder="Product Name" value="${currentName.replace(/"/g,'&quot;')}">
         </div>
-
         <div>
           <label class="swal-label">Price</label>
           <input id="sw-price" class="swal-input" type="number" step="0.01" placeholder="Price" value="${currentPrice}">
         </div>
-
-        <div>
-          <label class="swal-label">Unit</label>
-          <input id="sw-unit" class="swal-input" placeholder="pcs / box / etc." value="${currentUnit.replace(/"/g,'&quot;')}">
-        </div>
-
         <div>
           <label class="swal-label">Category</label>
           <select id="sw-category" class="swal-select">${catOptions}</select>
         </div>
-
         <div>
           <label class="swal-label">Brand</label>
           <select id="sw-brand" class="swal-select">${brandOptions}</select>
-        </div>
-
-        <div class="full">
-          <label class="swal-label">Short Description</label>
-          <input id="sw-short" class="swal-input" placeholder="Short description" value="${currentShort.replace(/"/g,'&quot;')}">
-        </div>
-
-        <div class="full">
-          <label class="swal-label">Description (HTML allowed)</label>
-          <textarea id="sw-desc" class="swal-textarea" placeholder="Full description">${(currentDesc || '').replace(/</g,'&lt;')}</textarea>
-        </div>
-
-        <div class="full">
-          <div class="sw-feat-header">
-            <label class="swal-label">Features (key/value)</label>
-            <button type="button" id="sw-feat-add" class="sw-feat-add">+ Add feature</button>
-          </div>
-          <div id="sw-feat-list" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-            ${renderFeaturesRows(featurePairs)}
-          </div>
         </div>
 
         <div class="full">
@@ -748,7 +780,7 @@
         </div>
       </div>
 
-      <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave fields empty to keep existing values.</p>
+      <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave text fields empty to keep existing values.</p>
     `;
 
     const { value: formValues } = await Swal.fire({
@@ -758,17 +790,7 @@
       showCancelButton: true,
       confirmButtonText: 'Update',
       didOpen: () => {
-        // features add/remove
-        const featList = document.getElementById('sw-feat-list');
-        document.getElementById('sw-feat-add')?.addEventListener('click', () => {
-          featList.insertAdjacentHTML('beforeend', renderFeaturesRows([['','']]));
-        });
-        featList.addEventListener('click', (ev) => {
-          const btn = ev.target.closest('.sw-fdel');
-          if (btn) btn.closest('.sw-feature-row')?.remove();
-        });
-
-        // upload handlers
+        // Upload handler
         const uploadBtn = document.getElementById('sw-upload-btn');
         const fileInput = document.getElementById('sw-files');
         const msgEl     = document.getElementById('sw-upload-msg');
@@ -779,20 +801,26 @@
           if (!files.length) { msgEl.textContent = 'Select 1 or more images first.'; return; }
           msgEl.textContent = 'Uploading…';
           uploadBtn.disabled = true;
+
           try {
+            // Use existing upload API
             const fd = new FormData();
             fd.append('token', token);
             fd.append('product_id', String(productId));
             [...files].forEach(f => fd.append('uploads[]', f, f.name));
+
             const res = await fetch(UPLOAD_IMG_API_URL, { method: 'POST', body: fd });
             const json = await res.json().catch(() => ({}));
             if (!res.ok || json.success === false) throw new Error(json.message || `HTTP ${res.status}`);
 
+            // Prefer server-returned uploads; else, show local previews
             let newUploads = [];
-            if (json?.data?.uploads) newUploads = normalizeUploads(json.data.uploads);
-            else newUploads = [...files].map(f => ({ id: null, path: URL.createObjectURL(f) }));
-
-            uploads = [...newUploads, ...uploads];
+            if (json?.data?.uploads) {
+              newUploads = normalizeUploads(json.data.uploads);
+            } else {
+              newUploads = [...files].map(f => ({ id: null, path: URL.createObjectURL(f) }));
+            }
+            uploads = [...newUploads, ...uploads]; // prepend new
             gridEl.innerHTML = renderUploadsGrid(uploads);
             msgEl.textContent = json.message || 'Images uploaded.';
             fileInput.value = '';
@@ -804,26 +832,28 @@
           }
         });
 
-        // delete per image
+        // Delete handler (event delegation)
         gridEl?.addEventListener('click', async (ev) => {
           const btnDel = ev.target.closest('.sw-del-upload');
           if (!btnDel) return;
           const uploadId = btnDel.dataset.uploadId;
-          if (!uploadId) { btnDel.closest('.relative')?.remove(); return; } // local preview
+          if (!uploadId) { // If no id, it’s a local preview (not saved yet)
+            btnDel.closest('.relative')?.remove();
+            return;
+          }
+
           btnDel.disabled = true;
           msgEl.textContent = 'Deleting image…';
           try {
             const res = await fetch(DELETE_UPLOAD_API_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                token,
-                product_id: Number(productId),
-                upload_ids: String(uploadId)
-              })
+              body: JSON.stringify({ token, upload_id: Number(uploadId) })
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok || json.success === false) throw new Error(json.message || `HTTP ${res.status}`);
+
+            // remove from local array + DOM
             uploads = uploads.filter(u => String(u.id) !== String(uploadId));
             btnDel.closest('.relative')?.remove();
             msgEl.textContent = json.message || 'Image deleted.';
@@ -837,13 +867,8 @@
       preConfirm: () => {
         const name = document.getElementById('sw-name').value.trim();
         const priceStr = document.getElementById('sw-price').value;
-        const unit = document.getElementById('sw-unit').value.trim();
-        const shortDesc = document.getElementById('sw-short').value.trim();
-        const desc = document.getElementById('sw-desc').value; // allow HTML
         const category_id = document.getElementById('sw-category').value;
         const brand_id = document.getElementById('sw-brand').value;
-        const featList = document.getElementById('sw-feat-list');
-        const featuresObj = collectFeaturePairsFromDom(featList);
 
         const out = {};
         if (name) out.name = name;
@@ -855,16 +880,8 @@
           }
           out.price = num;
         }
-        if (unit) out.unit = unit;
-        if (shortDesc) out.short_description = shortDesc;
-        if (desc) out.description = desc;               // server expects HTML or plain; you said it accepts any
         if (category_id) out.category_id = Number(category_id);
         if (brand_id) out.brand_id = Number(brand_id);
-
-        // Add features only if at least one key present
-        if (Object.keys(featuresObj).length) {
-          out.features = featuresObj;
-        }
         return out;
       }
     });
