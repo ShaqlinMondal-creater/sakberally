@@ -339,7 +339,8 @@
         name: state.name || "",
         category: state.category || "",
         limit: state.limit,
-        offset: state.offset
+        offset: state.offset,
+        sort:"desc"
       };
       const res = await fetch(API_URL, {
         method: 'POST',

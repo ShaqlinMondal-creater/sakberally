@@ -174,7 +174,7 @@ json_out(200, [
  -->
 
 
- <?php
+<?php
 // fetch_products.php
 require  '../configs/db_connect.php';
 
@@ -188,6 +188,7 @@ $category   = isset($in['category']) ? trim((string)$in['category']) : '';
 $productId  = isset($in['id'])       ? (int)$in['id']                : 0;
 $limit      = isset($in['limit'])    ? max(1, (int)$in['limit'])     : 10;
 $offset     = isset($in['offset'])   ? max(0, (int)$in['offset'])    : 0;
+$sort       = isset($in['sort'])     ? strtolower(trim((string)$in['sort'])) : 'asc'; // NEW
 
 /** ========== CONFIG: base URL for file links ========== */
 const BASE_URL = 'https://sakberally.com/apis';
@@ -245,7 +246,10 @@ if ($conds) {
     $sql .= " WHERE " . implode(' AND ', $conds);
 }
 
-$sql .= " ORDER BY p.id ASC LIMIT ? OFFSET ?";
+/** ✅ Add sorting direction (asc / desc) */
+$orderDir = ($sort === 'desc') ? 'DESC' : 'ASC';
+
+$sql .= " ORDER BY p.id $orderDir LIMIT ? OFFSET ?";
 $params[] = $limit;  $types .= 'i';
 $params[] = $offset; $types .= 'i';
 
