@@ -82,28 +82,23 @@
                                 </a>
 
                                 <!-- Products dropdown (desktop hover) -->
-                                <div class="relative group">
-                                    <button data-link="products.php" href="products" class="px-4 py-4 rounded nav-link flex items-center gap-1 text-gray-700 hover:text-red-600">
-                                        PRODUCTS
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
+                                <div class="relative group/products">
+                                <button data-link="products.php" href="products" class="px-4 py-4 rounded nav-link flex items-center gap-1 text-gray-700 hover:text-red-600">
+                                    PRODUCTS
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
 
-                                    <!-- Keep open while hovering parent OR dropdown -->
-                                    <div class="absolute left-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg
-                                        opacity-0 invisible group-hover:opacity-100 group-hover:visible  transition duration-200 ease-out z-20 py-2">
-                                        <a href="products?category=Wood Working" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Wood Working</a>
-                                        <a href="products?category=Pressure Washer Pump" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Pressure Washer Pump</a>
-                                        <a href="products?category=Construction Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Construction Machine</a>
-                                        <a href="products?category=CUT-100 Air Plasma Cutting Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">CUT-100 Air Plasma Cutting Machine</a>
-                                        <a href="products?category=Power Tools" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Power Tools</a>
-                                        <a href="products?category=Sheet Metal Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sheet Metal Machine</a>
-                                        <a href="products?category=Single Phase Floor Polishing Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Single Phase Floor Polishing Machine</a>
-                                        <a href="products?category=Air Compressor" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Air Compressor</a>
-                                        <a href="products?category=Woodworking Machine" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Woodworking Machine</a>
-                                    </div>
+                                <!-- IMPORTANT: use group-hover/products here -->
+                                <div id="desktopProductsDropdown"
+                                    class="absolute left-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg
+                                            opacity-0 invisible group-hover/products:opacity-100 group-hover/products:visible
+                                            transition duration-200 ease-out z-20 py-2">
+                                    <!-- filled by JS -->
                                 </div>
+                                </div>
+
 
                                 <a data-link="brands.php" class="px-4 py-4 rounded nav-link" href="brands">BRANDS</a>
                                 <a data-link="inquiry_form.php" class="px-4 py-4 rounded nav-link" href="inquiry_form">INQUIRY FORM</a>
@@ -134,18 +129,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    <div id="mobileProductsList" class="hidden ml-3 border-l border-gray-200 pl-3 space-y-1 pb-2">
-                        <a href="products?category=Wood Working" class="block py-2 text-sm">Wood Working</a>
-                        <a href="products?category=Pressure Washer Pump" class="block py-2 text-sm">Pressure Washer Pump</a>
-                        <a href="products?category=Construction Machine" class="block py-2 text-sm">Construction Machine</a>
-                        <a href="products?category=CUT-100 Air Plasma Cutting Machine" class="block py-2 text-sm">CUT-100 Air Plasma Cutting Machine</a>
-                        <a href="products?category=Power Tools" class="block py-2 text-sm">Power Tools</a>
-                        <a href="products?category=Sheet Metal Machine" class="block py-2 text-sm">Sheet Metal Machine</a>
-                        <a href="products?category=Single Phase Floor Polishing Machine" class="block py-2 text-sm">Single Phase Floor Polishing Machine</a>
-                        <a href="products?category=Air Compressor" class="block py-2 text-sm">Air Compressor</a>
-                        <a href="products?category=Woodworking Machine" class="block py-2 text-sm">Woodworking Machine</a>
-                    </div>
-
+                    <div id="mobileProductsList" class="hidden ml-3 border-l border-gray-200 pl-3 space-y-1 pb-2"></div>
                     <a class="block px-3 py-3 rounded nav-link" href="brands">BRANDS</a>
                     <a class="block px-3 py-3 rounded nav-link" href="inquiry_form">INQUIRY FORM</a>
                     <a class="block px-3 py-3 rounded nav-link" href="contact_us">CONTACT US</a>
@@ -207,3 +191,142 @@
         }
     });
 </script>
+
+<script>
+    (function() {
+    const BASE_URL = "<?php echo BASE_URL; ?>";
+    const desktopDD = document.getElementById('desktopProductsDropdown');
+    const mobileList = document.getElementById('mobileProductsList');
+    const mobileBtn = document.getElementById('mobileProductsBtn');
+    const mobileChevron = document.getElementById('mobileChevron');
+
+    if (!desktopDD || !mobileList) return;
+
+    const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    const parentLink = (id) => `sub_categories.php?category_id=${encodeURIComponent(id)}`;
+    const childLink  = (name) => `products?category=${encodeURIComponent(String(name).toLowerCase())}`;
+
+        const buildDesktopParent = (parent) => {
+            const hasChildren = Array.isArray(parent.children) && parent.children.length > 0;
+
+            if (!hasChildren) {
+                // simple parent link (no flyout)
+                return `
+                <a href="sub_categories.php?category_id=${encodeURIComponent(parent.id)}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+                    ${esc(parent.name)}
+                </a>`;
+            }
+
+            const childrenHtml = parent.children
+                .sort((a,b) => (a.sort_no ?? 0) - (b.sort_no ?? 0))
+                .map(ch => `
+                    <a href="products?category=${encodeURIComponent(String(ch.name).toLowerCase())}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+                        ${esc(ch.name)}
+                    </a>
+                `).join('');
+
+            return `
+                <!-- each parent is its own hover group -->
+                <div class="relative group/item">
+                    <!-- clicking parent goes to sub_categories -->
+                    <a href="sub_categories.php?category_id=${encodeURIComponent(parent.id)}"
+                        class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+                        <span>${esc(parent.name)}</span>
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+
+                    <!-- flyout only when THIS parent is hovered -->
+                    <div class="absolute top-0 left-full ml-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg
+                                opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible
+                                transition duration-200 ease-out z-20 py-2">
+                        ${childrenHtml}
+                    </div>
+                </div>`;
+        };
+
+        // MOBILE: parents list collapsed; tap PRODUCTS to show list; each parent with children gets its own mini-toggle
+        const buildMobileParent = (parent, idx) => {
+            const hasChildren = Array.isArray(parent.children) && parent.children.length > 0;
+
+            if (!hasChildren) {
+            return `<a href="${parentLink(parent.id)}" class="block py-2 text-sm">${esc(parent.name)}</a>`;
+            }
+
+            const cid = `mch-${idx}`;
+            const childrenHtml = parent.children
+            .sort((a,b) => (a.sort_no ?? 0) - (b.sort_no ?? 0))
+            .map(ch => `<a href="${childLink(ch.name)}" class="block py-2 text-sm">${esc(ch.name)}</a>`)
+            .join('');
+
+            return `
+            <div class="border-l border-gray-200 pl-3">
+                <button type="button" data-toggle="${cid}" class="w-full flex items-center justify-between py-2 text-sm">
+                <span class="text-left">${esc(parent.name)}</span>
+                <svg class="w-4 h-4 transition" data-chevron="${cid}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+                </button>
+                <div id="${cid}" class="hidden ml-3">
+                <!-- parent click behavior on mobile: also offer parent link -->
+                <a href="${parentLink(parent.id)}" class="block py-2 text-sm font-medium">View all ${esc(parent.name)}</a>
+                ${childrenHtml}
+                </div>
+            </div>`;
+        };
+
+    // Fetch categories
+    fetch(`${BASE_URL}/categories/fetch.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wise: 'all', limit: 100, offset: 0 })
+    })
+    .then(r => r.json())
+    .then(json => {
+        if (!json?.success) throw new Error(json?.message || 'API error');
+        const parents = Array.isArray(json?.data?.parents) ? json.data.parents : [];
+        parents.sort((a,b) => (a.sort_no ?? 0) - (b.sort_no ?? 0));
+
+        // DESKTOP: only parents visible; children appear in flyout on hover of that parent
+        desktopDD.innerHTML = parents.map(buildDesktopParent).join('') || `
+        <div class="px-4 py-2 text-sm text-gray-500">No categories</div>
+        `;
+
+        // MOBILE: list parents; each with its own mini-toggle for children
+        mobileList.innerHTML = parents.map((p,i) => buildMobileParent(p,i)).join('') || `
+        <div class="px-3 py-2 text-sm text-gray-500">No categories</div>
+        `;
+
+        // attach mobile per-parent toggles
+        mobileList.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-toggle]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-toggle');
+        const panel = document.getElementById(id);
+        const chev = mobileList.querySelector(`[data-chevron="${id}"]`);
+        if (!panel) return;
+        const hidden = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', !hidden);
+        if (chev) chev.style.transform = hidden ? 'rotate(180deg)' : '';
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        desktopDD.innerHTML = `<div class="px-4 py-2 text-sm text-red-600">Failed to load categories</div>`;
+        mobileList.innerHTML = `<div class="px-3 py-2 text-sm text-red-600">Failed to load categories</div>`;
+    });
+
+    // Existing mobile PRODUCTS accordion (your outer toggle)
+    if (mobileBtn && mobileList && mobileChevron) {
+        mobileBtn.addEventListener('click', () => {
+        const isHidden = mobileList.classList.contains('hidden');
+        mobileList.classList.toggle('hidden', !isHidden);
+        mobileChevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+        });
+    }
+    })();
+</script>
+
