@@ -576,10 +576,10 @@
       return `<div class="text-xs text-gray-500">No images yet.</div>`;
     }
     return `
-      <div class="grid grid-cols-3 gap-8" style="gap:10px">
+      <div class="grid grid-cols-6 gap-8" style="gap:10px">
         ${uploads.map(u => `
-          <div class="relative group border rounded-lg overflow-hidden">
-            <img src="${u.path}" alt="" style="width:100%;height:96px;object-fit:cover;">
+          <div class="relative group border rounded-lg overflow-hidden" style="width:100px;">
+            <img src="${u.path}" alt="" style="width:100%;height:96px;object-fit:contain;">
             <button
               type="button"
               class="sw-del-upload"
@@ -675,168 +675,93 @@
     const catOptions   = buildOptions(cats, selectedCatId || null);
     const brandOptions = buildOptions(brands, currentBrandId || null);
 
-    // HTML
-    // const html = `
-    //   <style>
-    //     .swal-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    //     .swal-form-grid .full { grid-column: 1 / -1; }
-    //     .swal-label { font-size:12px; color:#6b7280; display:block; margin-bottom:4px; }
-    //     .swal-input, .swal-select, .swal-textarea { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; }
-    //     .swal-textarea { min-height:90px; }
-    //     .sw-actions-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
-    //     .sw-upload-btn { padding:8px 12px; border-radius:8px; background:#2563eb; color:#fff; border:none; }
-    //     .sw-upload-msg { font-size:12px; color:#6b7280; margin-top:4px; }
-    //     .sw-feat-header { display:flex; align-items:center; justify-content:space-between; }
-    //     .sw-feat-add { border:1px solid #e5e7eb; border-radius:8px; padding:8px 10px; }
-    //   </style>
-
-    //   <div class="swal-form-grid">
-    //     <div class="full">
-    //       <label class="swal-label">Name</label>
-    //       <input id="sw-name" class="swal-input" placeholder="Product Name" value="${currentName.replace(/"/g,'&quot;')}">
-    //     </div>
-
-    //     <div>
-    //       <label class="swal-label">Price</label>
-    //       <input id="sw-price" class="swal-input" type="number" step="0.01" placeholder="Price" value="${currentPrice}">
-    //     </div>
-
-    //     <div>
-    //       <label class="swal-label">Unit</label>
-    //       <input id="sw-unit" class="swal-input" placeholder="pcs / box / etc." value="${currentUnit.replace(/"/g,'&quot;')}">
-    //     </div>
-
-    //     <div>
-    //       <label class="swal-label">Category</label>
-    //       <select id="sw-category" class="swal-select">${catOptions}</select>
-    //     </div>
-
-    //     <div>
-    //       <label class="swal-label">Brand</label>
-    //       <select id="sw-brand" class="swal-select">${brandOptions}</select>
-    //     </div>
-
-    //     <div class="full">
-    //       <label class="swal-label">Short Description</label>
-    //       <input id="sw-short" class="swal-input" placeholder="Short description" value="${currentShort.replace(/"/g,'&quot;')}">
-    //     </div>
-
-    //     <div class="full">
-    //       <label class="swal-label">Description (HTML allowed)</label>
-    //       <textarea id="sw-desc" class="swal-textarea" placeholder="Full description">${(currentDesc || '').replace(/</g,'&lt;')}</textarea>
-    //     </div>
-
-    //     <div class="full">
-    //       <div class="sw-feat-header">
-    //         <label class="swal-label">Features (key/value)</label>
-    //         <button type="button" id="sw-feat-add" class="sw-feat-add">+ Add feature</button>
-    //       </div>
-    //       <div id="sw-feat-list" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-    //         ${renderFeaturesRows(featurePairs)}
-    //       </div>
-    //     </div>
-
-    //     <div class="full">
-    //       <label class="swal-label">Images</label>
-    //       <div id="sw-uploads">${renderUploadsGrid(uploads)}</div>
-
-    //       <div class="sw-actions-row">
-    //         <input id="sw-files" type="file" accept="image/*" multiple class="swal-input" style="padding:8px">
-    //         <button type="button" id="sw-upload-btn" class="sw-upload-btn">Upload</button>
-    //       </div>
-    //       <div id="sw-upload-msg" class="sw-upload-msg">You can upload multiple images. Click ✕ to delete an image.</div>
-    //     </div>
-    //   </div>
-
-    //   <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave fields empty to keep existing values.</p>
-    // `;
-
     const html = `
-  <style>
-    .swal-form-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-    }
-    .swal-label{ font-size:12px; color:#6b7280; display:block; margin-bottom:4px; }
-    .swal-input,.swal-select,.swal-textarea{
-      width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px;
-    }
-    .swal-textarea{ min-height:110px; }
-    .span-3{ grid-column:1 / -1; }
-    .sw-actions-row{ display:flex; gap:8px; align-items:center; margin-top:8px; }
-    .sw-upload-btn{ padding:8px 12px; border-radius:8px; background:#2563eb; color:#fff; border:none; }
-    .sw-upload-msg{ font-size:12px; color:#6b7280; margin-top:4px; }
-    .sw-feat-header{ display:flex; align-items:center; justify-content:space-between; }
-    .sw-feat-add{ border:1px solid #e5e7eb; border-radius:8px; padding:8px 10px; }
-  </style>
+      <style>
+        .swal-form-grid{
+          display:grid;
+          grid-template-columns:repeat(3, minmax(0,1fr));
+          gap:12px;
+        }
+        .swal-label{ font-size:12px; color:#6b7280; display:block; margin-bottom:4px; }
+        .swal-input,.swal-select,.swal-textarea{
+          width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px;
+        }
+        .swal-textarea{ min-height:110px; }
+        .span-3{ grid-column:1 / -1; }
+        .sw-actions-row{align-items: center;  margin-top: 15px; display: grid; grid-template-columns: 3fr 1fr; gap: 40px; }
+        .sw-upload-btn{ padding:8px 12px; border-radius:8px; background:#2563eb; color:#fff; border:none; }
+        .sw-upload-msg{ font-size:12px; color:#6b7280; margin-top:4px; }
+        .sw-feat-header{ display:flex; align-items:center; justify-content:space-between; }
+        .sw-feat-add{ border:1px solid #e5e7eb; border-radius:8px; padding:8px 10px; }
+      </style>
 
-  <div class="swal-form-grid">
-    <!-- Row 1 (3 fields) -->
-    <div>
-      <label class="swal-label">Name</label>
-      <input id="sw-name" class="swal-input" placeholder="Product Name" value="${currentName.replace(/"/g,'&quot;')}">
-    </div>
-    <div>
-      <label class="swal-label">Price</label>
-      <input id="sw-price" class="swal-input" type="number" step="0.01" placeholder="Price" value="${currentPrice}">
-    </div>
-    <div>
-      <label class="swal-label">Unit</label>
-      <input id="sw-unit" class="swal-input" placeholder="pcs / box / etc." value="${currentUnit.replace(/"/g,'&quot;')}">
-    </div>
+      <div class="swal-form-grid">
+        <!-- Row 1 (3 fields) -->
+        <div>
+          <label class="swal-label">Name</label>
+          <input id="sw-name" class="swal-input" placeholder="Product Name" value="${currentName.replace(/"/g,'&quot;')}">
+        </div>
+        <div>
+          <label class="swal-label">Price</label>
+          <input id="sw-price" class="swal-input" type="number" step="0.01" placeholder="Price" value="${currentPrice}">
+        </div>
+        <div>
+          <label class="swal-label">Unit</label>
+          <input id="sw-unit" class="swal-input" placeholder="pcs / box / etc." value="${currentUnit.replace(/"/g,'&quot;')}">
+        </div>
 
-    <!-- Row 2 (3 fields) -->
-    <div>
-      <label class="swal-label">Category</label>
-      <select id="sw-category" class="swal-select">${catOptions}</select>
-    </div>
-    <div>
-      <label class="swal-label">Brand</label>
-      <select id="sw-brand" class="swal-select">${brandOptions}</select>
-    </div>
-    <div>
-      <label class="swal-label">Short Description</label>
-      <input id="sw-short" class="swal-input" placeholder="Short description" value="${currentShort.replace(/"/g,'&quot;')}">
-    </div>
+        <!-- Row 2 (3 fields) -->
+        <div>
+          <label class="swal-label">Category</label>
+          <select id="sw-category" class="swal-select">${catOptions}</select>
+        </div>
+        <div>
+          <label class="swal-label">Brand</label>
+          <select id="sw-brand" class="swal-select">${brandOptions}</select>
+        </div>
+        <div>
+          <label class="swal-label">Short Description</label>
+          <input id="sw-short" class="swal-input" placeholder="Short description" value="${currentShort.replace(/"/g,'&quot;')}">
+        </div>
 
-    <!-- Row 3 (full width) -->
-    <div class="span-3">
-      <label class="swal-label">Description (HTML allowed)</label>
-      <textarea id="sw-desc" class="swal-textarea" placeholder="Full description">${(currentDesc || '').replace(/</g,'&lt;')}</textarea>
-    </div>
+        <!-- Row 3 (full width) -->
+        <div class="span-3">
+          <label class="swal-label">Description (HTML allowed)</label>
+          <textarea id="sw-desc" class="swal-textarea" placeholder="Full description">${(currentDesc || '').replace(/</g,'&lt;')}</textarea>
+        </div>
 
-    <!-- Row 4 (full width) -->
-    <div class="span-3">
-      <div class="sw-feat-header">
-        <label class="swal-label">Features (key/value)</label>
-        <button type="button" id="sw-feat-add" class="sw-feat-add">+ Add feature</button>
+        <!-- Row 4 (full width) -->
+        <div class="span-3">
+          <div class="sw-feat-header">
+            <label class="swal-label">Features (key/value)</label>
+            <button type="button" id="sw-feat-add" class="sw-feat-add">+ Add feature</button>
+          </div>
+          <div id="sw-feat-list" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+            ${renderFeaturesRows(featurePairs)}
+          </div>
+        </div>
+
+        <!-- Row 5 (full width) -->
+        <div class="span-3">
+          <label class="swal-label">Images</label>
+          <div id="sw-uploads">${renderUploadsGrid(uploads)}</div>
+
+          <div class="sw-actions-row">
+            <input id="sw-files" type="file" accept="image/*" multiple class="swal-input" style="padding:8px">
+            <button type="button" id="sw-upload-btn" class="sw-upload-btn">Upload</button>
+          </div>
+          <div id="sw-upload-msg" class="sw-upload-msg">You can upload multiple images. Click ✕ to delete an image.</div>
+        </div>
       </div>
-      <div id="sw-feat-list" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-        ${renderFeaturesRows(featurePairs)}
-      </div>
-    </div>
 
-    <!-- Row 5 (full width) -->
-    <div class="span-3">
-      <label class="swal-label">Images</label>
-      <div id="sw-uploads">${renderUploadsGrid(uploads)}</div>
-
-      <div class="sw-actions-row">
-        <input id="sw-files" type="file" accept="image/*" multiple class="swal-input" style="padding:8px">
-        <button type="button" id="sw-upload-btn" class="sw-upload-btn">Upload</button>
-      </div>
-      <div id="sw-upload-msg" class="sw-upload-msg">You can upload multiple images. Click ✕ to delete an image.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave fields empty to keep existing values.</p>
-`;
+      <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Leave fields empty to keep existing values.</p>
+    `;
 
 
     const { value: formValues } = await Swal.fire({
       title: 'Update Product',
       html,
+       width: '900px',     // 👈 increase width (default ~500px)
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Update',
