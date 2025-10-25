@@ -44,7 +44,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // ✅ Required body
-        body: JSON.stringify({ wise: 'category', limit: 50, offset: 0 })
+        body: JSON.stringify({ wise: 'category', limit: 100, offset: 0 })
       });
 
       const json = await res.json();
@@ -79,7 +79,7 @@
         a.innerHTML = `
           <span class="relative inline-flex items-center justify-center">
             <img src="${img}" alt="${name}"
-                 class="w-32 h-32 sm:w-36 sm:h-36 rounded-full object-cover border-[6px] border-gray-300 shadow-sm
+                 class="w-32 h-32 sm:w-52 sm:h-52 rounded-full object-cover border-[6px] border-gray-300 shadow-sm
                         transition duration-200 group-hover:scale-105"
                  onerror="this.onerror=null; this.src='${CATEGORY_PLACEHOLDER}'">
           </span>
